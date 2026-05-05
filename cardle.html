@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardle</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #242424;
+    --border: #2e2e2e;
+    --text: #f0f0f0;
+    --muted: #888;
+    --green: #22c55e;
+    --green-bg: #052e16;
+    --orange: #f59e0b;
+    --orange-bg: #2d1a00;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+  header { width: 100%; max-width: 900px; padding: 2rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+  .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 52px; font-weight: 800; letter-spacing: -1px; color: var(--text); line-height: 1; margin-bottom: 4px; }
+  .logo span { color: var(--red); }
+  .tagline { font-size: 13px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+  main { width: 100%; max-width: 900px; padding: 0 1rem 3rem; }
+  .legend { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .search-area { position: relative; margin-bottom: 1rem; }
+  .search-row { display: flex; gap: 8px; }
+  .search-row input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; padding: 0 14px; height: 44px; outline: none; transition: border-color 0.15s; }
+  .search-row input:focus { border-color: #555; }
+  .search-row input::placeholder { color: var(--muted); }
+  .search-row button { background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 0 20px; height: 44px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
+  .search-row button:hover { opacity: 0.85; }
+  .search-row button:active { opacity: 0.7; transform: scale(0.98); }
+  .suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; z-index: 100; overflow: hidden; max-height: 240px; overflow-y: auto; }
+  .suggestion-item { padding: 10px 14px; font-size: 14px; cursor: pointer; color: var(--text); transition: background 0.1s; display: flex; justify-content: space-between; align-items: center; }
+  .suggestion-item:hover { background: var(--border); }
+  .suggestion-item .s-year { font-size: 12px; color: var(--muted); }
+  .attempts-bar { font-size: 12px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+  .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; min-width: 680px; }
+  thead th { background: var(--surface); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--border); }
+  thead th:first-child { text-align: left; padding-left: 14px; min-width: 160px; }
+  tbody tr { animation: slideIn 0.3s ease; border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  tbody td { padding: 8px; text-align: center; vertical-align: middle; }
+  tbody td:first-child { text-align: left; padding-left: 14px; font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
+  .chip { display: inline-flex; align-items: center; justify-content: center; gap: 3px; padding: 5px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; min-width: 60px; line-height: 1; white-space: nowrap; }
+  .chip.correct { background: var(--green-bg); color: var(--green); }
+  .chip.close { background: var(--orange-bg); color: var(--orange); }
+  .chip.wrong { background: var(--surface2); color: var(--muted); }
+  .arrow-up { color: var(--green); font-size: 10px; }
+  .arrow-down { color: var(--red); font-size: 10px; }
+  .banner { border-radius: 10px; padding: 1.25rem 1.5rem; margin-top: 1.5rem; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.03em; }
+  .banner.win { background: var(--green-bg); color: var(--green); border: 1px solid #16a34a; }
+  .banner .sub { display: block; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 400; color: inherit; opacity: 0.75; margin-top: 6px; }
+  .new-game-btn { margin-top: 12px; display: inline-block; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 8px 20px; cursor: pointer; }
+  .new-game-btn:hover { opacity: 0.85; }
+  .db-info { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">CAR<span>DLE</span></div>
+  <div class="tagline">Devinez la voiture du jour</div>
+</header>
+<main>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Correct</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> Proche (±10%)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2e2e2e;border:1px solid #444"></div> Faux</div>
+  </div>
+  <div class="search-area">
+    <div class="search-row">
+      <input type="text" id="carInput" placeholder="Tapez une marque ou un modèle..." autocomplete="off" />
+      <button id="guessBtn">Deviner</button>
+    </div>
+    <div id="suggestions" class="suggestions" style="display:none"></div>
+  </div>
+  <div class="attempts-bar">
+    <span id="attemptsText">0 essai</span>
+    <span style="color:var(--border)">|</span>
+    <span class="db-info" id="dbInfo">Chargement...</span>
+  </div>
+  <div class="table-wrapper" id="tableWrapper" style="display:none">
+    <table>
+      <thead>
+        <tr>
+          <th>Voiture</th>
+          <th>Pays</th>
+          <th>Catégorie</th>
+          <th>Années prod.</th>
+          <th>Puissance (ch)</th>
+          <th>Cylindres</th>
+          <th>Prix (k€)</th>
+        </tr>
+      </thead>
+      <tbody id="guessesBody"></tbody>
+    </table>
+  </div>
+  <div id="banner"></div>
+</main>
+
+<script>
+// =============================================
+// BASE DE DONNÉES — 300+ voitures
+// =============================================
+const CARS = [
+  // FERRARI
+  {name:"Ferrari 250 GTO",pays:"Italie",cat:"Supercar",annee:1962,cv:300,cyl:12,carbu:"Essence",prix:18000},
+  {name:"Ferrari 308 GTB",pays:"Italie",cat:"Supercar",annee:1975,cv:255,cyl:8,carbu:"Essence",prix:80},
+  {name:"Ferrari Testarossa",pays:"Italie",cat:"Supercar",annee:1984,cv:390,cyl:12,carbu:"Essence",prix:120},
+  {name:"Ferrari F40",pays:"Italie",cat:"Supercar",annee:1987,cv:478,cyl:8,carbu:"Essence",prix:400},
+  {name:"Ferrari F50",pays:"Italie",cat:"Hypercar",annee:1995,cv:520,cyl:12,carbu:"Essence",prix:550},
+  {name:"Ferrari Enzo",pays:"Italie",cat:"Hypercar",annee:2002,cv:660,cyl:12,carbu:"Essence",prix:660},
+  {name:"Ferrari 599 GTB",pays:"Italie",cat:"GT",annee:2006,cv:620,cyl:12,carbu:"Essence",prix:250},
+  {name:"Ferrari California",pays:"Italie",cat:"GT",annee:2008,cv:460,cyl:8,carbu:"Essence",prix:175},
+  {name:"Ferrari 458 Italia",pays:"Italie",cat:"Supercar",annee:2009,cv:570,cyl:8,carbu:"Essence",prix:225},
+  {name:"Ferrari LaFerrari",pays:"Italie",cat:"Hypercar",annee:2013,cv:963,cyl:12,carbu:"Hybride",prix:1300},
+  {name:"Ferrari 488 GTB",pays:"Italie",cat:"Supercar",annee:2015,cv:670,cyl:8,carbu:"Essence",prix:230},
+  {name:"Ferrari Portofino",pays:"Italie",cat:"GT",annee:2017,cv:600,cyl:8,carbu:"Essence",prix:215},
+  {name:"Ferrari SF90 Stradale",pays:"Italie",cat:"Hypercar",annee:2019,cv:1000,cyl:8,carbu:"Hybride",prix:500},
+  {name:"Ferrari Roma",pays:"Italie",cat:"GT",annee:2020,cv:620,cyl:8,carbu:"Essence",prix:220},
+  {name:"Ferrari 296 GTB",pays:"Italie",cat:"Supercar",annee:2021,cv:830,cyl:6,carbu:"Hybride",prix:270},
+  // LAMBORGHINI
+  {name:"Lamborghini Miura",pays:"Italie",cat:"Supercar",annee:1966,cv:350,cyl:12,carbu:"Essence",prix:200},
+  {name:"Lamborghini Countach",pays:"Italie",cat:"Supercar",annee:1974,cv:375,cyl:12,carbu:"Essence",prix:150},
+  {name:"Lamborghini Diablo",pays:"Italie",cat:"Supercar",annee:1990,cv:492,cyl:12,carbu:"Essence",prix:240},
+  {name:"Lamborghini Murciélago",pays:"Italie",cat:"Supercar",annee:2001,cv:580,cyl:12,carbu:"Essence",prix:280},
+  {name:"Lamborghini Gallardo",pays:"Italie",cat:"Supercar",annee:2003,cv:500,cyl:10,carbu:"Essence",prix:160},
+  {name:"Lamborghini Aventador",pays:"Italie",cat:"Supercar",annee:2011,cv:700,cyl:12,carbu:"Essence",prix:380},
+  {name:"Lamborghini Huracán",pays:"Italie",cat:"Supercar",annee:2014,cv:610,cyl:10,carbu:"Essence",prix:200},
+  {name:"Lamborghini Urus",pays:"Italie",cat:"SUV sport",annee:2018,cv:650,cyl:8,carbu:"Essence",prix:190},
+  {name:"Lamborghini Revuelto",pays:"Italie",cat:"Hypercar",annee:2023,cv:1015,cyl:12,carbu:"Hybride",prix:550},
+  // PORSCHE
+  {name:"Porsche 356",pays:"Allemagne",cat:"Sport",annee:1948,cv:60,cyl:4,carbu:"Essence",prix:20},
+  {name:"Porsche 911 2.0",pays:"Allemagne",cat:"Sport",annee:1963,cv:130,cyl:6,carbu:"Essence",prix:25},
+  {name:"Porsche 914",pays:"Allemagne",cat:"Sport",annee:1969,cv:100,cyl:4,carbu:"Essence",prix:15},
+  {name:"Porsche 928",pays:"Allemagne",cat:"GT",annee:1977,cv:240,cyl:8,carbu:"Essence",prix:60},
+  {name:"Porsche 944",pays:"Allemagne",cat:"Sport",annee:1982,cv:163,cyl:4,carbu:"Essence",prix:35},
+  {name:"Porsche 959",pays:"Allemagne",cat:"Supercar",annee:1986,cv:450,cyl:6,carbu:"Essence",prix:200},
+  {name:"Porsche 968",pays:"Allemagne",cat:"Sport",annee:1991,cv:240,cyl:4,carbu:"Essence",prix:50},
+  {name:"Porsche Boxster",pays:"Allemagne",cat:"Roadster",annee:1996,cv:204,cyl:6,carbu:"Essence",prix:55},
+  {name:"Porsche 911 Turbo",pays:"Allemagne",cat:"Sport",annee:1999,cv:420,cyl:6,carbu:"Essence",prix:180},
+  {name:"Porsche Carrera GT",pays:"Allemagne",cat:"Supercar",annee:2004,cv:612,cyl:10,carbu:"Essence",prix:450},
+  {name:"Porsche Cayman",pays:"Allemagne",cat:"Sport",annee:2005,cv:295,cyl:6,carbu:"Essence",prix:60},
+  {name:"Porsche Panamera",pays:"Allemagne",cat:"Berline sport",annee:2009,cv:400,cyl:8,carbu:"Essence",prix:100},
+  {name:"Porsche Cayenne Turbo",pays:"Allemagne",cat:"SUV sport",annee:2010,cv:500,cyl:8,carbu:"Essence",prix:175},
+  {name:"Porsche 918 Spyder",pays:"Allemagne",cat:"Hypercar",annee:2013,cv:887,cyl:8,carbu:"Hybride",prix:780},
+  {name:"Porsche 911 Carrera",pays:"Allemagne",cat:"Sport",annee:2019,cv:385,cyl:6,carbu:"Essence",prix:115},
+  {name:"Porsche Taycan",pays:"Allemagne",cat:"Berline",annee:2019,cv:571,cyl:0,carbu:"Électrique",prix:105},
+  {name:"Porsche 911 GT3 RS",pays:"Allemagne",cat:"Sport",annee:2022,cv:525,cyl:6,carbu:"Essence",prix:230},
+  // McLAREN
+  {name:"McLaren F1",pays:"Royaume-Uni",cat:"Hypercar",annee:1992,cv:627,cyl:12,carbu:"Essence",prix:15000},
+  {name:"McLaren MP4-12C",pays:"Royaume-Uni",cat:"Supercar",annee:2011,cv:592,cyl:8,carbu:"Essence",prix:175},
+  {name:"McLaren P1",pays:"Royaume-Uni",cat:"Hypercar",annee:2013,cv:916,cyl:8,carbu:"Hybride",prix:1150},
+  {name:"McLaren 650S",pays:"Royaume-Uni",cat:"Supercar",annee:2014,cv:650,cyl:8,carbu:"Essence",prix:210},
+  {name:"McLaren 570S",pays:"Royaume-Uni",cat:"Supercar",annee:2015,cv:570,cyl:8,carbu:"Essence",prix:175},
+  {name:"McLaren 720S",pays:"Royaume-Uni",cat:"Supercar",annee:2017,cv:720,cyl:8,carbu:"Essence",prix:250},
+  {name:"McLaren Senna",pays:"Royaume-Uni",cat:"Hypercar",annee:2018,cv:800,cyl:8,carbu:"Essence",prix:800},
+  {name:"McLaren Speedtail",pays:"Royaume-Uni",cat:"Hypercar",annee:2020,cv:1055,cyl:8,carbu:"Hybride",prix:2100},
+  {name:"McLaren Artura",pays:"Royaume-Uni",cat:"Supercar",annee:2021,cv:680,cyl:6,carbu:"Hybride",prix:230},
+  // BUGATTI
+  {name:"Bugatti Type 35",pays:"France",cat:"Course",annee:1924,cv:95,cyl:8,carbu:"Essence",prix:50},
+  {name:"Bugatti EB110",pays:"France",cat:"Hypercar",annee:1991,cv:560,cyl:12,carbu:"Essence",prix:350},
+  {name:"Bugatti Veyron",pays:"France",cat:"Hypercar",annee:2005,cv:1001,cyl:16,carbu:"Essence",prix:1200},
+  {name:"Bugatti Chiron",pays:"France",cat:"Hypercar",annee:2016,cv:1500,cyl:16,carbu:"Essence",prix:2800},
+  {name:"Bugatti Divo",pays:"France",cat:"Hypercar",annee:2018,cv:1500,cyl:16,carbu:"Essence",prix:5000},
+  {name:"Bugatti Bolide",pays:"France",cat:"Hypercar",annee:2021,cv:1825,cyl:16,carbu:"Essence",prix:4000},
+  {name:"Bugatti Tourbillon",pays:"France",cat:"Hypercar",annee:2024,cv:1800,cyl:8,carbu:"Hybride",prix:3800},
+  // ASTON MARTIN
+  {name:"Aston Martin DB4",pays:"Royaume-Uni",cat:"GT",annee:1958,cv:240,cyl:6,carbu:"Essence",prix:80},
+  {name:"Aston Martin DB5",pays:"Royaume-Uni",cat:"GT",annee:1963,cv:282,cyl:6,carbu:"Essence",prix:100},
+  {name:"Aston Martin V8 Vantage",pays:"Royaume-Uni",cat:"GT",annee:1977,cv:340,cyl:8,carbu:"Essence",prix:90},
+  {name:"Aston Martin Vanquish",pays:"Royaume-Uni",cat:"GT",annee:2001,cv:460,cyl:12,carbu:"Essence",prix:200},
+  {name:"Aston Martin DB9",pays:"Royaume-Uni",cat:"GT",annee:2004,cv:450,cyl:12,carbu:"Essence",prix:175},
+  {name:"Aston Martin One-77",pays:"Royaume-Uni",cat:"Hypercar",annee:2009,cv:750,cyl:12,carbu:"Essence",prix:1200},
+  {name:"Aston Martin DB11",pays:"Royaume-Uni",cat:"GT",annee:2016,cv:510,cyl:12,carbu:"Essence",prix:195},
+  {name:"Aston Martin Valkyrie",pays:"Royaume-Uni",cat:"Hypercar",annee:2019,cv:1160,cyl:12,carbu:"Hybride",prix:3000},
+  {name:"Aston Martin DBX",pays:"Royaume-Uni",cat:"SUV sport",annee:2020,cv:550,cyl:8,carbu:"Essence",prix:180},
+  // BMW
+  {name:"BMW 2002",pays:"Allemagne",cat:"Compacte",annee:1968,cv:100,cyl:4,carbu:"Essence",prix:15},
+  {name:"BMW M1",pays:"Allemagne",cat:"Supercar",annee:1978,cv:277,cyl:6,carbu:"Essence",prix:80},
+  {name:"BMW E30 M3",pays:"Allemagne",cat:"Compacte sport",annee:1986,cv:200,cyl:4,carbu:"Essence",prix:35},
+  {name:"BMW 850i",pays:"Allemagne",cat:"GT",annee:1989,cv:300,cyl:12,carbu:"Essence",prix:80},
+  {name:"BMW Z8",pays:"Allemagne",cat:"Roadster",annee:2000,cv:400,cyl:8,carbu:"Essence",prix:130},
+  {name:"BMW M3 E46",pays:"Allemagne",cat:"Berline sport",annee:2000,cv:343,cyl:6,carbu:"Essence",prix:60},
+  {name:"BMW M5 E60",pays:"Allemagne",cat:"Berline sport",annee:2004,cv:507,cyl:10,carbu:"Essence",prix:85},
+  {name:"BMW M3 E92",pays:"Allemagne",cat:"Berline sport",annee:2007,cv:420,cyl:8,carbu:"Essence",prix:70},
+  {name:"BMW i8",pays:"Allemagne",cat:"Sport",annee:2014,cv:374,cyl:3,carbu:"Hybride",prix:130},
+  {name:"BMW M2",pays:"Allemagne",cat:"Compacte sport",annee:2015,cv:370,cyl:6,carbu:"Essence",prix:60},
+  {name:"BMW M3",pays:"Allemagne",cat:"Berline sport",annee:2021,cv:510,cyl:6,carbu:"Essence",prix:85},
+  {name:"BMW M4 CSL",pays:"Allemagne",cat:"Berline sport",annee:2022,cv:550,cyl:6,carbu:"Essence",prix:140},
+  {name:"BMW iX M60",pays:"Allemagne",cat:"SUV",annee:2022,cv:610,cyl:0,carbu:"Électrique",prix:130},
+  // MERCEDES
+  {name:"Mercedes 300 SL Gullwing",pays:"Allemagne",cat:"GT",annee:1954,cv:215,cyl:6,carbu:"Essence",prix:200},
+  {name:"Mercedes 190E 2.3-16",pays:"Allemagne",cat:"Berline sport",annee:1984,cv:185,cyl:4,carbu:"Essence",prix:40},
+  {name:"Mercedes SL 500",pays:"Allemagne",cat:"Roadster",annee:1989,cv:326,cyl:8,carbu:"Essence",prix:100},
+  {name:"Mercedes CLK GTR",pays:"Allemagne",cat:"Supercar",annee:1997,cv:612,cyl:12,carbu:"Essence",prix:1500},
+  {name:"Mercedes SLR McLaren",pays:"Allemagne",cat:"Supercar",annee:2003,cv:626,cyl:8,carbu:"Essence",prix:450},
+  {name:"Mercedes SLS AMG",pays:"Allemagne",cat:"Supercar",annee:2009,cv:571,cyl:8,carbu:"Essence",prix:200},
+  {name:"Mercedes-AMG GT",pays:"Allemagne",cat:"Sport",annee:2014,cv:510,cyl:8,carbu:"Essence",prix:115},
+  {name:"Mercedes-AMG GT R",pays:"Allemagne",cat:"Sport",annee:2016,cv:585,cyl:8,carbu:"Essence",prix:200},
+  {name:"Mercedes-AMG One",pays:"Allemagne",cat:"Hypercar",annee:2021,cv:1063,cyl:4,carbu:"Hybride",prix:2700},
+  {name:"Mercedes EQS",pays:"Allemagne",cat:"Berline",annee:2021,cv:523,cyl:0,carbu:"Électrique",prix:110},
+  // AUDI
+  {name:"Audi Quattro",pays:"Allemagne",cat:"Rallye",annee:1980,cv:200,cyl:5,carbu:"Essence",prix:30},
+  {name:"Audi 200 Quattro",pays:"Allemagne",cat:"Berline",annee:1983,cv:200,cyl:5,carbu:"Essence",prix:35},
+  {name:"Audi RS2",pays:"Allemagne",cat:"Break sport",annee:1994,cv:315,cyl:5,carbu:"Essence",prix:45},
+  {name:"Audi TT",pays:"Allemagne",cat:"Sport",annee:1998,cv:225,cyl:4,carbu:"Essence",prix:35},
+  {name:"Audi R8 V8",pays:"Allemagne",cat:"Supercar",annee:2006,cv:420,cyl:8,carbu:"Essence",prix:110},
+  {name:"Audi R8 V10",pays:"Allemagne",cat:"Supercar",annee:2015,cv:540,cyl:10,carbu:"Essence",prix:170},
+  {name:"Audi RS6",pays:"Allemagne",cat:"Break sport",annee:2019,cv:600,cyl:8,carbu:"Essence",prix:120},
+  {name:"Audi e-tron GT RS",pays:"Allemagne",cat:"Berline sport",annee:2021,cv:646,cyl:0,carbu:"Électrique",prix:150},
+  // VOLKSWAGEN
+  {name:"Volkswagen Beetle",pays:"Allemagne",cat:"Citadine",annee:1938,cv:25,cyl:4,carbu:"Essence",prix:5},
+  {name:"Volkswagen Golf GTI Mk1",pays:"Allemagne",cat:"Compacte",annee:1976,cv:110,cyl:4,carbu:"Essence",prix:10},
+  {name:"Volkswagen Corrado",pays:"Allemagne",cat:"Sport",annee:1988,cv:160,cyl:4,carbu:"Essence",prix:25},
+  {name:"Volkswagen Golf R32",pays:"Allemagne",cat:"Compacte",annee:2002,cv:241,cyl:6,carbu:"Essence",prix:35},
+  {name:"Volkswagen Golf GTI",pays:"Allemagne",cat:"Compacte",annee:2021,cv:245,cyl:4,carbu:"Essence",prix:38},
+  {name:"Volkswagen ID.4",pays:"Allemagne",cat:"SUV",annee:2020,cv:204,cyl:0,carbu:"Électrique",prix:45},
+  // FORD
+  {name:"Ford Model T",pays:"États-Unis",cat:"Berline",annee:1908,cv:20,cyl:4,carbu:"Essence",prix:1},
+  {name:"Ford Mustang 1ère gen",pays:"États-Unis",cat:"Muscle car",annee:1964,cv:271,cyl:8,carbu:"Essence",prix:10},
+  {name:"Ford GT40",pays:"États-Unis",cat:"Course",annee:1964,cv:485,cyl:8,carbu:"Essence",prix:50},
+  {name:"Ford Escort RS1600",pays:"États-Unis",cat:"Rallye",annee:1970,cv:120,cyl:4,carbu:"Essence",prix:8},
+  {name:"Ford RS200",pays:"États-Unis",cat:"Rallye",annee:1984,cv:450,cyl:4,carbu:"Essence",prix:30},
+  {name:"Ford Mustang GT",pays:"États-Unis",cat:"Muscle car",annee:2018,cv:460,cyl:8,carbu:"Essence",prix:45},
+  {name:"Ford GT",pays:"États-Unis",cat:"Supercar",annee:2005,cv:550,cyl:8,carbu:"Essence",prix:180},
+  {name:"Ford GT 2016",pays:"États-Unis",cat:"Supercar",annee:2016,cv:647,cyl:6,carbu:"Essence",prix:450},
+  {name:"Ford Bronco",pays:"États-Unis",cat:"SUV",annee:2021,cv:314,cyl:6,carbu:"Essence",prix:45},
+  {name:"Ford Mustang Mach-E",pays:"États-Unis",cat:"SUV",annee:2020,cv:358,cyl:0,carbu:"Électrique",prix:55},
+  // CHEVROLET
+  {name:"Chevrolet Corvette C1",pays:"États-Unis",cat:"Sport",annee:1953,cv:150,cyl:6,carbu:"Essence",prix:10},
+  {name:"Chevrolet Camaro 1ère gen",pays:"États-Unis",cat:"Muscle car",annee:1966,cv:295,cyl:8,carbu:"Essence",prix:8},
+  {name:"Chevrolet Corvette C3",pays:"États-Unis",cat:"Sport",annee:1968,cv:300,cyl:8,carbu:"Essence",prix:12},
+  {name:"Chevrolet Corvette C5 Z06",pays:"États-Unis",cat:"Supercar",annee:2001,cv:405,cyl:8,carbu:"Essence",prix:55},
+  {name:"Chevrolet Corvette C6 ZR1",pays:"États-Unis",cat:"Supercar",annee:2008,cv:638,cyl:8,carbu:"Essence",prix:110},
+  {name:"Chevrolet Corvette C8",pays:"États-Unis",cat:"Sport",annee:2020,cv:502,cyl:8,carbu:"Essence",prix:65},
+  {name:"Chevrolet Camaro ZL1",pays:"États-Unis",cat:"Muscle car",annee:2017,cv:650,cyl:8,carbu:"Essence",prix:65},
+  // DODGE
+  {name:"Dodge Charger Daytona",pays:"États-Unis",cat:"Muscle car",annee:1969,cv:425,cyl:8,carbu:"Essence",prix:8},
+  {name:"Dodge Viper",pays:"États-Unis",cat:"Supercar",annee:1992,cv:400,cyl:10,carbu:"Essence",prix:60},
+  {name:"Dodge Viper ACR",pays:"États-Unis",cat:"Supercar",annee:2015,cv:645,cyl:10,carbu:"Essence",prix:120},
+  {name:"Dodge Challenger Hellcat",pays:"États-Unis",cat:"Muscle car",annee:2015,cv:717,cyl:8,carbu:"Essence",prix:65},
+  {name:"Dodge Demon",pays:"États-Unis",cat:"Muscle car",annee:2018,cv:840,cyl:8,carbu:"Essence",prix:85},
+  // TOYOTA
+  {name:"Toyota 2000GT",pays:"Japon",cat:"Sport",annee:1967,cv:150,cyl:6,carbu:"Essence",prix:30},
+  {name:"Toyota Celica",pays:"Japon",cat:"Sport",annee:1970,cv:97,cyl:4,carbu:"Essence",prix:12},
+  {name:"Toyota Supra Mk3",pays:"Japon",cat:"Sport",annee:1986,cv:230,cyl:6,carbu:"Essence",prix:25},
+  {name:"Toyota Supra Mk4",pays:"Japon",cat:"Sport",annee:1993,cv:326,cyl:6,carbu:"Essence",prix:40},
+  {name:"Toyota GR86",pays:"Japon",cat:"Sport",annee:2021,cv:235,cyl:4,carbu:"Essence",prix:32},
+  {name:"Toyota GR Yaris",pays:"Japon",cat:"Compacte sport",annee:2020,cv:261,cyl:3,carbu:"Essence",prix:38},
+  {name:"Toyota Supra",pays:"Japon",cat:"Sport",annee:2019,cv:340,cyl:6,carbu:"Essence",prix:55},
+  {name:"Toyota Land Cruiser",pays:"Japon",cat:"SUV",annee:1951,cv:105,cyl:6,carbu:"Essence",prix:70},
+  // NISSAN
+  {name:"Nissan Skyline GT-R R32",pays:"Japon",cat:"Berline sport",annee:1989,cv:280,cyl:6,carbu:"Essence",prix:35},
+  {name:"Nissan Skyline GT-R R34",pays:"Japon",cat:"Berline sport",annee:1999,cv:280,cyl:6,carbu:"Essence",prix:80},
+  {name:"Nissan GT-R R35",pays:"Japon",cat:"Supercar",annee:2007,cv:570,cyl:6,carbu:"Essence",prix:115},
+  {name:"Nissan 370Z",pays:"Japon",cat:"Sport",annee:2009,cv:328,cyl:6,carbu:"Essence",prix:35},
+  {name:"Nissan Leaf",pays:"Japon",cat:"Citadine",annee:2010,cv:109,cyl:0,carbu:"Électrique",prix:32},
+  {name:"Nissan Z",pays:"Japon",cat:"Sport",annee:2022,cv:400,cyl:6,carbu:"Essence",prix:40},
+  // HONDA
+  {name:"Honda S600",pays:"Japon",cat:"Roadster",annee:1964,cv:57,cyl:4,carbu:"Essence",prix:5},
+  {name:"Honda NSX",pays:"Japon",cat:"Supercar",annee:1990,cv:270,cyl:6,carbu:"Essence",prix:60},
+  {name:"Honda Civic Type R EK9",pays:"Japon",cat:"Compacte sport",annee:1997,cv:185,cyl:4,carbu:"Essence",prix:25},
+  {name:"Honda S2000",pays:"Japon",cat:"Roadster",annee:1999,cv:240,cyl:4,carbu:"Essence",prix:30},
+  {name:"Honda NSX 2016",pays:"Japon",cat:"Supercar",annee:2016,cv:581,cyl:6,carbu:"Hybride",prix:175},
+  {name:"Honda Civic Type R FK8",pays:"Japon",cat:"Compacte sport",annee:2017,cv:320,cyl:4,carbu:"Essence",prix:36},
+  // MAZDA
+  {name:"Mazda Cosmo",pays:"Japon",cat:"Sport",annee:1967,cv:110,cyl:2,carbu:"Essence",prix:10},
+  {name:"Mazda RX-7 FC",pays:"Japon",cat:"Sport",annee:1985,cv:150,cyl:2,carbu:"Essence",prix:20},
+  {name:"Mazda RX-7 FD",pays:"Japon",cat:"Sport",annee:1991,cv:255,cyl:2,carbu:"Essence",prix:35},
+  {name:"Mazda MX-5 NA",pays:"Japon",cat:"Roadster",annee:1989,cv:115,cyl:4,carbu:"Essence",prix:15},
+  {name:"Mazda MX-5",pays:"Japon",cat:"Roadster",annee:2015,cv:131,cyl:4,carbu:"Essence",prix:28},
+  {name:"Mazda RX-8",pays:"Japon",cat:"Sport",annee:2003,cv:231,cyl:2,carbu:"Essence",prix:28},
+  // SUBARU
+  {name:"Subaru Impreza WRX STI",pays:"Japon",cat:"Compacte",annee:1994,cv:280,cyl:4,carbu:"Essence",prix:30},
+  {name:"Subaru Impreza WRX STI 2007",pays:"Japon",cat:"Compacte",annee:2007,cv:300,cyl:4,carbu:"Essence",prix:38},
+  {name:"Subaru BRZ",pays:"Japon",cat:"Sport",annee:2012,cv:200,cyl:4,carbu:"Essence",prix:30},
+  {name:"Subaru WRX STI S209",pays:"Japon",cat:"Compacte sport",annee:2019,cv:341,cyl:4,carbu:"Essence",prix:55},
+  // MITSUBISHI
+  {name:"Mitsubishi Lancer Evo I",pays:"Japon",cat:"Compacte",annee:1992,cv:250,cyl:4,carbu:"Essence",prix:20},
+  {name:"Mitsubishi Lancer Evo VI TME",pays:"Japon",cat:"Compacte",annee:1999,cv:280,cyl:4,carbu:"Essence",prix:35},
+  {name:"Mitsubishi Lancer Evo X",pays:"Japon",cat:"Compacte",annee:2007,cv:295,cyl:4,carbu:"Essence",prix:40},
+  {name:"Mitsubishi Eclipse",pays:"Japon",cat:"Sport",annee:1989,cv:195,cyl:4,carbu:"Essence",prix:18},
+  // LEXUS
+  {name:"Lexus LFA",pays:"Japon",cat:"Supercar",annee:2010,cv:560,cyl:10,carbu:"Essence",prix:375},
+  {name:"Lexus RC F",pays:"Japon",cat:"Sport",annee:2014,cv:481,cyl:8,carbu:"Essence",prix:75},
+  {name:"Lexus LC 500",pays:"Japon",cat:"GT",annee:2017,cv:477,cyl:8,carbu:"Essence",prix:95},
+  // RENAULT
+  {name:"Renault Alpine A110 1600S",pays:"France",cat:"Sport",annee:1968,cv:138,cyl:4,carbu:"Essence",prix:10},
+  {name:"Renault 5 Turbo",pays:"France",cat:"Rallye",annee:1980,cv:160,cyl:4,carbu:"Essence",prix:15},
+  {name:"Renault Clio Williams",pays:"France",cat:"Compacte sport",annee:1993,cv:150,cyl:4,carbu:"Essence",prix:18},
+  {name:"Renault Sport Spider",pays:"France",cat:"Roadster",annee:1996,cv:150,cyl:4,carbu:"Essence",prix:22},
+  {name:"Renault Mégane R26.R",pays:"France",cat:"Compacte sport",annee:2008,cv:230,cyl:4,carbu:"Essence",prix:35},
+  {name:"Renault Mégane RS Trophy-R",pays:"France",cat:"Compacte sport",annee:2019,cv:300,cyl:4,carbu:"Essence",prix:45},
+  {name:"Renault Clio",pays:"France",cat:"Citadine",annee:2019,cv:100,cyl:4,carbu:"Essence",prix:18},
+  {name:"Renault Zoe",pays:"France",cat:"Citadine",annee:2012,cv:135,cyl:0,carbu:"Électrique",prix:32},
+  // PEUGEOT
+  {name:"Peugeot 205 GTI",pays:"France",cat:"Compacte sport",annee:1984,cv:130,cyl:4,carbu:"Essence",prix:8},
+  {name:"Peugeot 405 Mi16",pays:"France",cat:"Berline sport",annee:1988,cv:160,cyl:4,carbu:"Essence",prix:18},
+  {name:"Peugeot 306 Maxi",pays:"France",cat:"Rallye",annee:1998,cv:280,cyl:4,carbu:"Essence",prix:20},
+  {name:"Peugeot 206 WRC",pays:"France",cat:"Rallye",annee:1999,cv:300,cyl:4,carbu:"Essence",prix:25},
+  {name:"Peugeot 308 GTi",pays:"France",cat:"Compacte sport",annee:2015,cv:270,cyl:4,carbu:"Essence",prix:36},
+  {name:"Peugeot 508 PSE",pays:"France",cat:"Berline sport",annee:2021,cv:360,cyl:4,carbu:"Hybride",prix:65},
+  // CITROËN
+  {name:"Citroën DS",pays:"France",cat:"Berline",annee:1955,cv:75,cyl:4,carbu:"Essence",prix:8},
+  {name:"Citroën SM",pays:"France",cat:"GT",annee:1970,cv:170,cyl:6,carbu:"Essence",prix:15},
+  {name:"Citroën Xsara WRC",pays:"France",cat:"Rallye",annee:2001,cv:300,cyl:4,carbu:"Essence",prix:25},
+  {name:"Citroën C2 VTS",pays:"France",cat:"Compacte sport",annee:2003,cv:125,cyl:4,carbu:"Essence",prix:16},
+  // ALPINE
+  {name:"Alpine A110",pays:"France",cat:"Sport",annee:2017,cv:252,cyl:4,carbu:"Essence",prix:65},
+  {name:"Alpine A110 R",pays:"France",cat:"Sport",annee:2022,cv:300,cyl:4,carbu:"Essence",prix:100},
+  // KOENIGSEGG
+  {name:"Koenigsegg CC8S",pays:"Suède",cat:"Hypercar",annee:2002,cv:655,cyl:8,carbu:"Essence",prix:600},
+  {name:"Koenigsegg CCX",pays:"Suède",cat:"Hypercar",annee:2006,cv:806,cyl:8,carbu:"Essence",prix:700},
+  {name:"Koenigsegg Agera R",pays:"Suède",cat:"Hypercar",annee:2011,cv:1140,cyl:8,carbu:"Essence",prix:1600},
+  {name:"Koenigsegg One:1",pays:"Suède",cat:"Hypercar",annee:2014,cv:1341,cyl:8,carbu:"Essence",prix:1900},
+  {name:"Koenigsegg Jesko",pays:"Suède",cat:"Hypercar",annee:2020,cv:1600,cyl:8,carbu:"Essence",prix:2500},
+  {name:"Koenigsegg Gemera",pays:"Suède",cat:"Hypercar",annee:2020,cv:1700,cyl:3,carbu:"Hybride",prix:1700},
+  // PAGANI
+  {name:"Pagani Zonda C12",pays:"Italie",cat:"Hypercar",annee:1999,cv:394,cyl:12,carbu:"Essence",prix:300},
+  {name:"Pagani Zonda F",pays:"Italie",cat:"Hypercar",annee:2005,cv:602,cyl:12,carbu:"Essence",prix:700},
+  {name:"Pagani Huayra",pays:"Italie",cat:"Hypercar",annee:2011,cv:730,cyl:12,carbu:"Essence",prix:1200},
+  {name:"Pagani Utopia",pays:"Italie",cat:"Hypercar",annee:2022,cv:864,cyl:12,carbu:"Essence",prix:2200},
+  // RIMAC
+  {name:"Rimac Concept One",pays:"Croatie",cat:"Hypercar",annee:2013,cv:1088,cyl:0,carbu:"Électrique",prix:980},
+  {name:"Rimac Nevera",pays:"Croatie",cat:"Hypercar",annee:2021,cv:1914,cyl:0,carbu:"Électrique",prix:2100},
+  // TESLA
+  {name:"Tesla Roadster",pays:"États-Unis",cat:"Roadster",annee:2008,cv:248,cyl:0,carbu:"Électrique",prix:110},
+  {name:"Tesla Model S",pays:"États-Unis",cat:"Berline",annee:2012,cv:416,cyl:0,carbu:"Électrique",prix:80},
+  {name:"Tesla Model S Plaid",pays:"États-Unis",cat:"Berline",annee:2021,cv:1020,cyl:0,carbu:"Électrique",prix:130},
+  {name:"Tesla Model 3",pays:"États-Unis",cat:"Berline",annee:2017,cv:283,cyl:0,carbu:"Électrique",prix:45},
+  {name:"Tesla Model X",pays:"États-Unis",cat:"SUV",annee:2015,cv:670,cyl:0,carbu:"Électrique",prix:95},
+  {name:"Tesla Cybertruck",pays:"États-Unis",cat:"Pick-up",annee:2023,cv:845,cyl:0,carbu:"Électrique",prix:80},
+  // ALFA ROMEO
+  {name:"Alfa Romeo Giulia Sprint GTA",pays:"Italie",cat:"Sport",annee:1965,cv:170,cyl:4,carbu:"Essence",prix:20},
+  {name:"Alfa Romeo Montreal",pays:"Italie",cat:"GT",annee:1970,cv:200,cyl:8,carbu:"Essence",prix:15},
+  {name:"Alfa Romeo GTV6",pays:"Italie",cat:"GT",annee:1980,cv:158,cyl:6,carbu:"Essence",prix:20},
+  {name:"Alfa Romeo 156 GTA",pays:"Italie",cat:"Berline sport",annee:2002,cv:250,cyl:6,carbu:"Essence",prix:35},
+  {name:"Alfa Romeo 8C Competizione",pays:"Italie",cat:"Supercar",annee:2007,cv:450,cyl:8,carbu:"Essence",prix:140},
+  {name:"Alfa Romeo Giulia QV",pays:"Italie",cat:"Berline sport",annee:2016,cv:510,cyl:6,carbu:"Essence",prix:80},
+  {name:"Alfa Romeo 4C",pays:"Italie",cat:"Sport",annee:2013,cv:240,cyl:4,carbu:"Essence",prix:65},
+  // MASERATI
+  {name:"Maserati 250F",pays:"Italie",cat:"Course",annee:1954,cv:240,cyl:6,carbu:"Essence",prix:100},
+  {name:"Maserati Bora",pays:"Italie",cat:"GT",annee:1971,cv:310,cyl:8,carbu:"Essence",prix:30},
+  {name:"Maserati GranTurismo",pays:"Italie",cat:"GT",annee:2007,cv:405,cyl:8,carbu:"Essence",prix:120},
+  {name:"Maserati MC20",pays:"Italie",cat:"Supercar",annee:2020,cv:630,cyl:6,carbu:"Essence",prix:220},
+  // LOTUS
+  {name:"Lotus Elan",pays:"Royaume-Uni",cat:"Roadster",annee:1962,cv:105,cyl:4,carbu:"Essence",prix:8},
+  {name:"Lotus Esprit S1",pays:"Royaume-Uni",cat:"Sport",annee:1976,cv:160,cyl:4,carbu:"Essence",prix:15},
+  {name:"Lotus Esprit Turbo",pays:"Royaume-Uni",cat:"Sport",annee:1980,cv:210,cyl:4,carbu:"Essence",prix:25},
+  {name:"Lotus Elise",pays:"Royaume-Uni",cat:"Roadster",annee:1996,cv:120,cyl:4,carbu:"Essence",prix:28},
+  {name:"Lotus Exige",pays:"Royaume-Uni",cat:"Sport",annee:2000,cv:192,cyl:4,carbu:"Essence",prix:40},
+  {name:"Lotus Evija",pays:"Royaume-Uni",cat:"Hypercar",annee:2020,cv:2000,cyl:0,carbu:"Électrique",prix:1800},
+  // JAGUAR
+  {name:"Jaguar E-Type",pays:"Royaume-Uni",cat:"GT",annee:1961,cv:265,cyl:6,carbu:"Essence",prix:30},
+  {name:"Jaguar XJS",pays:"Royaume-Uni",cat:"GT",annee:1975,cv:295,cyl:12,carbu:"Essence",prix:25},
+  {name:"Jaguar XK8",pays:"Royaume-Uni",cat:"GT",annee:1996,cv:290,cyl:8,carbu:"Essence",prix:70},
+  {name:"Jaguar XKR-S",pays:"Royaume-Uni",cat:"Sport",annee:2011,cv:550,cyl:8,carbu:"Essence",prix:95},
+  {name:"Jaguar F-Type R",pays:"Royaume-Uni",cat:"Sport",annee:2013,cv:550,cyl:8,carbu:"Essence",prix:100},
+  {name:"Jaguar I-Pace",pays:"Royaume-Uni",cat:"SUV",annee:2018,cv:400,cyl:0,carbu:"Électrique",prix:75},
+  // BENTLEY
+  {name:"Bentley Mulsanne",pays:"Royaume-Uni",cat:"Berline de luxe",annee:2010,cv:512,cyl:8,carbu:"Essence",prix:280},
+  {name:"Bentley Continental GT",pays:"Royaume-Uni",cat:"GT",annee:2003,cv:560,cyl:12,carbu:"Essence",prix:210},
+  {name:"Bentley Bentayga",pays:"Royaume-Uni",cat:"SUV de luxe",annee:2015,cv:608,cyl:8,carbu:"Essence",prix:200},
+  // ROLLS-ROYCE
+  {name:"Rolls-Royce Silver Shadow",pays:"Royaume-Uni",cat:"Berline de luxe",annee:1965,cv:200,cyl:8,carbu:"Essence",prix:60},
+  {name:"Rolls-Royce Corniche",pays:"Royaume-Uni",cat:"Cabriolet de luxe",annee:1971,cv:220,cyl:8,carbu:"Essence",prix:80},
+  {name:"Rolls-Royce Ghost",pays:"Royaume-Uni",cat:"Berline de luxe",annee:2009,cv:570,cyl:12,carbu:"Essence",prix:250},
+  {name:"Rolls-Royce Wraith",pays:"Royaume-Uni",cat:"GT de luxe",annee:2013,cv:632,cyl:12,carbu:"Essence",prix:280},
+  {name:"Rolls-Royce Spectre",pays:"Royaume-Uni",cat:"GT de luxe",annee:2023,cv:584,cyl:0,carbu:"Électrique",prix:330},
+  // SEAT / CUPRA
+  {name:"Seat León Cupra R",pays:"Espagne",cat:"Compacte sport",annee:2019,cv:300,cyl:4,carbu:"Essence",prix:38},
+  {name:"Cupra Born",pays:"Espagne",cat:"Compacte",annee:2021,cv:231,cyl:0,carbu:"Électrique",prix:42},
+  {name:"Cupra Formentor VZ5",pays:"Espagne",cat:"SUV sport",annee:2021,cv:390,cyl:5,carbu:"Essence",prix:60},
+  // HYUNDAI / KIA
+  {name:"Hyundai i30 N",pays:"Corée du Sud",cat:"Compacte sport",annee:2017,cv:275,cyl:4,carbu:"Essence",prix:35},
+  {name:"Hyundai Ioniq 5 N",pays:"Corée du Sud",cat:"Compacte sport",annee:2023,cv:650,cyl:0,carbu:"Électrique",prix:65},
+  {name:"Kia Stinger GT",pays:"Corée du Sud",cat:"Berline sport",annee:2017,cv:365,cyl:6,carbu:"Essence",prix:50},
+  {name:"Kia EV6 GT",pays:"Corée du Sud",cat:"Berline sport",annee:2022,cv:585,cyl:0,carbu:"Électrique",prix:65},
+  // VOLVO
+  {name:"Volvo Amazon",pays:"Suède",cat:"Berline",annee:1956,cv:85,cyl:4,carbu:"Essence",prix:5},
+  {name:"Volvo 240 Turbo",pays:"Suède",cat:"Berline",annee:1981,cv:155,cyl:4,carbu:"Essence",prix:15},
+  {name:"Volvo 850 T5-R",pays:"Suède",cat:"Break sport",annee:1994,cv:240,cyl:5,carbu:"Essence",prix:30},
+  {name:"Volvo C30 Polestar",pays:"Suède",cat:"Compacte sport",annee:2012,cv:280,cyl:5,carbu:"Essence",prix:40},
+  {name:"Polestar 1",pays:"Suède",cat:"GT",annee:2019,cv:609,cyl:4,carbu:"Hybride",prix:140},
+  {name:"Polestar 2",pays:"Suède",cat:"Berline",annee:2020,cv:408,cyl:0,carbu:"Électrique",prix:55},
+  // SAAB
+  {name:"Saab Sonett",pays:"Suède",cat:"Sport",annee:1966,cv:60,cyl:3,carbu:"Essence",prix:4},
+  {name:"Saab 900 Turbo",pays:"Suède",cat:"Compacte",annee:1978,cv:143,cyl:4,carbu:"Essence",prix:15},
+  {name:"Saab 9-3 Viggen",pays:"Suède",cat:"Compacte sport",annee:1998,cv:230,cyl:4,carbu:"Essence",prix:28},
+];
+
+const seed = Math.floor(Date.now() / 86400000);
+const target = CARS[seed % CARS.length];
+let guesses = [];
+let gameOver = false;
+
+document.getElementById('dbInfo').textContent = CARS.length + ' voitures disponibles';
+
+const input = document.getElementById('carInput');
+const suggestionsDiv = document.getElementById('suggestions');
+const tableWrapper = document.getElementById('tableWrapper');
+const guessesBody = document.getElementById('guessesBody');
+const attemptsText = document.getElementById('attemptsText');
+const banner = document.getElementById('banner');
+
+function isClose(val, tgt, field) {
+  if (field === 'annee') return Math.abs(val - tgt) <= 5;
+  if (field === 'cv') return tgt > 0 && Math.abs(val - tgt) / tgt <= 0.10;
+  if (field === 'cyl') return Math.abs(val - tgt) <= 1;
+  if (field === 'prix') return tgt > 0 && Math.abs(val - tgt) / tgt <= 0.10;
+  return false;
+}
+
+function arrow(val, tgt) {
+  if (val < tgt) return '<span class="arrow-up">▲</span>';
+  if (val > tgt) return '<span class="arrow-down">▼</span>';
+  return '';
+}
+
+function chipClass(val, tgt, field) {
+  if (typeof val === 'string') return val === tgt ? 'correct' : 'wrong';
+  if (val === tgt) return 'correct';
+  if (isClose(val, tgt, field)) return 'close';
+  return 'wrong';
+}
+
+function renderGuess(car) {
+  const fields = [
+    { val: car.pays, tgt: target.pays, display: car.pays, field: 'pays' },
+    { val: car.cat, tgt: target.cat, display: car.cat, field: 'cat' },
+    { val: car.annee, tgt: target.annee, display: car.annee + ' ' + arrow(car.annee, target.annee), field: 'annee' },
+    { val: car.cv, tgt: target.cv, display: (car.cv === 0 ? 'Élec.' : car.cv + ' ch') + ' ' + arrow(car.cv, target.cv), field: 'cv' },
+    { val: car.cyl, tgt: target.cyl, display: car.cyl === 0 ? 'Élec.' : car.cyl + ' ' + arrow(car.cyl, target.cyl), field: 'cyl' },
+    { val: car.prix, tgt: target.prix, display: car.prix + 'k€' + ' ' + arrow(car.prix, target.prix), field: 'prix' },
+  ];
+
+  const cells = fields.map(f => {
+    const cls = chipClass(f.val, f.tgt, f.field);
+    return `<td><span class="chip ${cls}">${f.display}</span></td>`;
+  });
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${car.name}</td>${cells.join('')}`;
+  guessesBody.prepend(tr);
+}
+
+function submitGuess(car) {
+  if (gameOver) return;
+  if (guesses.find(g => g.name === car.name)) {
+    input.value = '';
+    suggestionsDiv.style.display = 'none';
+    return;
+  }
+  guesses.push(car);
+  tableWrapper.style.display = '';
+  const n = guesses.length;
+  attemptsText.textContent = n + ' essai' + (n > 1 ? 's' : '');
+  renderGuess(car);
+
+  if (car.name === target.name) {
+    gameOver = true;
+    banner.innerHTML = `<div class="banner win">Bravo ! C'était la ${target.name} (${target.annee})<span class="sub">Trouvée en ${n} essai${n > 1 ? 's' : ''} — ${target.cv} ch · ${target.pays} · ${target.cat}</span><br><button class="new-game-btn" onclick="newGame()">Nouvelle partie</button></div>`;
+  }
+  input.value = '';
+  suggestionsDiv.style.display = 'none';
+}
+
+function newGame() {
+  guesses = [];
+  gameOver = false;
+  guessesBody.innerHTML = '';
+  tableWrapper.style.display = 'none';
+  banner.innerHTML = '';
+  attemptsText.textContent = '0 essai';
+  const newTarget = CARS[Math.floor(Math.random() * CARS.length)];
+  Object.assign(target, newTarget);
+}
+
+input.addEventListener('input', () => {
+  const q = input.value.trim().toLowerCase();
+  if (!q || q.length < 2) { suggestionsDiv.style.display = 'none'; return; }
+  const matches = CARS.filter(c =>
+    c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name)
+  );
+  if (!matches.length) { suggestionsDiv.style.display = 'none'; return; }
+  suggestionsDiv.innerHTML = matches.slice(0, 10).map(c =>
+    `<div class="suggestion-item" data-name="${c.name}"><span>${c.name}</span><span class="s-year">${c.pays} · ${c.annee}</span></div>`
+  ).join('');
+  suggestionsDiv.style.display = '';
+});
+
+suggestionsDiv.addEventListener('click', e => {
+  const item = e.target.closest('.suggestion-item');
+  if (!item) return;
+  const car = CARS.find(c => c.name === item.dataset.name);
+  if (car) submitGuess(car);
+});
+
+document.getElementById('guessBtn').addEventListener('click', () => {
+  const q = input.value.trim().toLowerCase();
+  const matches = CARS.filter(c => c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name));
+  if (matches.length === 1) submitGuess(matches[0]);
+  else if (matches.length > 1) {
+    suggestionsDiv.style.display = '';
+  }
+});
+
+input.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const q = input.value.trim().toLowerCase();
+  const matches = CARS.filter(c => c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name));
+  if (matches.length === 1) submitGuess(matches[0]);
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-area')) suggestionsDiv.style.display = 'none';
+});
+</script>
+</body>
+</html>
