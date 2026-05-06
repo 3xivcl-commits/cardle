@@ -119,7 +119,7 @@
     <table>
       <thead>
         <tr>
-          <th id="thCar"></th><th id="thCountry"></th><th id="thCat"></th>
+          <th id="thCar"></th><th id="thBrand"></th><th id="thCountry"></th><th id="thCat"></th>
           <th id="thYear"></th><th id="thPower"></th><th id="thCyl"></th><th id="thPrice"></th>
         </tr>
       </thead>
@@ -137,7 +137,7 @@ const T = {
     lgClose:'Proche (±10%)', lgWrong:'Faux',
     placeholder:'Tapez un modèle de voiture...', guessBtn:'Deviner',
     attempts: n => n + ' essai' + (n > 1 ? 's' : ''),
-    thCar:'Voiture', thCountry:'Pays', thCat:'Catégorie',
+    thCar:'Voiture', thBrand:'Marque', thCountry:'Pays', thCat:'Catégorie',
     thYear:'Année', thPower:'Puissance (ch)', thCyl:'Cylindres', thPrice:'Prix (k€)',
     elec:'Élec.', power: cv => cv + ' ch',
     winTitle: (name, year) => `Bravo ! C'était la ${name} (${year})`,
@@ -149,7 +149,7 @@ const T = {
     lgClose:'Close (±10%)', lgWrong:'Wrong',
     placeholder:'Type a car model...', guessBtn:'Guess',
     attempts: n => n + ' guess' + (n > 1 ? 'es' : ''),
-    thCar:'Car', thCountry:'Country', thCat:'Category',
+    thCar:'Car', thBrand:'Brand', thCountry:'Country', thCat:'Category',
     thYear:'Year', thPower:'Power (hp)', thCyl:'Cylinders', thPrice:'Price (k€)',
     elec:'Elec.', power: cv => cv + ' hp',
     winTitle: (name, year) => `Well done! It was the ${name} (${year})`,
@@ -419,7 +419,16 @@ const CARS = [
 // ── STATE & STORAGE ───────────────────────────────────────────
 const TODAY = Math.floor(Date.now() / 86400000);
 const STORAGE_KEY = 'cardle_state';
-const target = CARS[TODAY % CARS.length];
+
+// Seeded pseudo-random based on the day — same result for everyone on the same day,
+// but no predictable cycle (mulberry32 hash)
+function seededRandom(seed) {
+  let t = seed + 0x6D2B79F5;
+  t = Math.imul(t ^ t >>> 15, t | 1);
+  t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+  return ((t ^ t >>> 14) >>> 0) / 4294967296;
+}
+const target = CARS[Math.floor(seededRandom(TODAY) * CARS.length)];
 
 let lang = localStorage.getItem('cardle_lang') || 'fr';
 let guesses = [];
@@ -469,6 +478,7 @@ function applyUI() {
   document.getElementById('carInput').placeholder     = t('placeholder');
   document.getElementById('guessBtn').textContent     = t('guessBtn');
   document.getElementById('thCar').textContent        = t('thCar');
+  document.getElementById('thBrand').textContent      = t('thBrand');
   document.getElementById('thCountry').textContent    = t('thCountry');
   document.getElementById('thCat').textContent        = t('thCat');
   document.getElementById('thYear').textContent       = t('thYear');
@@ -497,10 +507,22 @@ function chipClass(val, tgt, field) {
   return isClose(val, tgt, field) ? 'close' : 'wrong';
 }
 
+function getBrand(car) {
+  // Extract brand = first word(s) before the model number/name
+  // Handle multi-word brands: Aston Martin, Rolls-Royce, etc.
+  const multiBrands = ['Aston Martin','Rolls-Royce','Alfa Romeo','Mercedes-AMG'];
+  for (const b of multiBrands) {
+    if (car.name.startsWith(b)) return b;
+  }
+  return car.name.split(' ')[0];
+}
+
 function buildRow(car) {
+  const brand = getBrand(car);
   const fields = [
-    { val: car.pays, tgt: target.pays, display: dPays(car.pays), field: 'pays' },
-    { val: car.cat,  tgt: target.cat,  display: dCat(car.cat),   field: 'cat'  },
+    { val: brand,    tgt: getBrand(target), display: brand,          field: 'brand' },
+    { val: car.pays, tgt: target.pays,      display: dPays(car.pays), field: 'pays' },
+    { val: car.cat,  tgt: target.cat,       display: dCat(car.cat),   field: 'cat'  },
     { val: car.annee, tgt: target.annee, display: car.annee + ' ' + arrow(car.annee, target.annee), field: 'annee' },
     { val: car.cv,   tgt: target.cv,   display: dPower(car.cv) + ' ' + arrow(car.cv, target.cv),   field: 'cv'   },
     { val: car.cyl,  tgt: target.cyl,  display: dCyl(car.cyl) + (car.cyl > 0 ? ' ' + arrow(car.cyl, target.cyl) : ''), field: 'cyl' },
