@@ -7,41 +7,61 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0f0f;
-    --surface: #1a1a1a;
-    --surface2: #242424;
-    --border: #2e2e2e;
-    --text: #f0f0f0;
-    --muted: #888;
-    --green: #22c55e;
-    --green-bg: #052e16;
-    --orange: #f59e0b;
-    --orange-bg: #2d1a00;
-    --red: #ef4444;
+    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #242424; --border: #2e2e2e;
+    --text: #f0f0f0; --muted: #888; --green: #22c55e; --green-bg: #052e16;
+    --orange: #f59e0b; --orange-bg: #2d1a00; --red: #ef4444;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
-  header { width: 100%; max-width: 900px; padding: 2rem 1rem 1rem; display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+
+  header {
+    width: 100%; max-width: 900px; padding: 1.5rem 1rem 1rem;
+    display: flex; flex-direction: column; align-items: center;
+    border-bottom: 1px solid var(--border); margin-bottom: 2rem;
+    position: relative;
+  }
+  .lang-switcher {
+    position: absolute; top: 1.5rem; right: 1rem;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--muted); font-weight: 500;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .lang-btn {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--muted); font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+    padding: 4px 9px; cursor: pointer; transition: all 0.15s; text-transform: uppercase;
+  }
+  .lang-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .lang-btn:not(.active):hover { border-color: #555; color: var(--text); }
+
   .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 52px; font-weight: 800; letter-spacing: -1px; color: var(--text); line-height: 1; margin-bottom: 4px; }
   .logo span { color: var(--red); }
   .tagline { font-size: 13px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
   main { width: 100%; max-width: 900px; padding: 0 1rem 3rem; }
+
   .legend { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
   .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
   .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
   .search-area { position: relative; margin-bottom: 1rem; }
   .search-row { display: flex; gap: 8px; }
   .search-row input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; padding: 0 14px; height: 44px; outline: none; transition: border-color 0.15s; }
   .search-row input:focus { border-color: #555; }
   .search-row input::placeholder { color: var(--muted); }
+  .search-row input:disabled { opacity: 0.35; cursor: not-allowed; }
   .search-row button { background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 0 20px; height: 44px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
   .search-row button:hover { opacity: 0.85; }
   .search-row button:active { opacity: 0.7; transform: scale(0.98); }
+  .search-row button:disabled { opacity: 0.3; cursor: not-allowed; }
+
   .suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; z-index: 100; overflow: hidden; max-height: 240px; overflow-y: auto; }
   .suggestion-item { padding: 10px 14px; font-size: 14px; cursor: pointer; color: var(--text); transition: background 0.1s; display: flex; justify-content: space-between; align-items: center; }
   .suggestion-item:hover { background: var(--border); }
   .suggestion-item .s-year { font-size: 12px; color: var(--muted); }
-  .attempts-bar { font-size: 12px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+
+  .attempts-bar { font-size: 12px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; margin-bottom: 1.5rem; }
+
   .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
   table { width: 100%; border-collapse: collapse; min-width: 680px; }
   thead th { background: var(--surface); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--border); }
@@ -51,18 +71,21 @@
   @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
   tbody td { padding: 8px; text-align: center; vertical-align: middle; }
   tbody td:first-child { text-align: left; padding-left: 14px; font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
+
   .chip { display: inline-flex; align-items: center; justify-content: center; gap: 3px; padding: 5px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; min-width: 60px; line-height: 1; white-space: nowrap; }
   .chip.correct { background: var(--green-bg); color: var(--green); }
   .chip.close { background: var(--orange-bg); color: var(--orange); }
   .chip.wrong { background: var(--surface2); color: var(--muted); }
   .arrow-up { color: var(--green); font-size: 10px; }
   .arrow-down { color: var(--red); font-size: 10px; }
-  .banner { border-radius: 10px; padding: 1.25rem 1.5rem; margin-top: 1.5rem; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.03em; }
+
+  .banner { border-radius: 10px; padding: 1.5rem; margin-top: 1.5rem; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 0.03em; }
   .banner.win { background: var(--green-bg); color: var(--green); border: 1px solid #16a34a; }
   .banner .sub { display: block; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 400; color: inherit; opacity: 0.75; margin-top: 6px; }
-  .new-game-btn { margin-top: 12px; display: inline-block; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 8px 20px; cursor: pointer; }
-  .new-game-btn:hover { opacity: 0.85; }
-  .db-info { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+  .countdown-block { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(34,197,94,0.2); }
+  .countdown-label { font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.6; margin-bottom: 8px; }
+  .countdown-time { font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; letter-spacing: 4px; color: var(--text); }
+
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -70,38 +93,34 @@
 </head>
 <body>
 <header>
+  <div class="lang-switcher">
+    <span id="langLabel"></span>
+    <button class="lang-btn" id="btnFR" onclick="setLang('fr')">FR</button>
+    <button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button>
+  </div>
   <div class="logo">CAR<span>DLE</span></div>
-  <div class="tagline">Devinez la voiture du jour</div>
+  <div class="tagline" id="tagline"></div>
 </header>
 <main>
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> Correct</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> Proche (±10%)</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#2e2e2e;border:1px solid #444"></div> Faux</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> <span id="lgCorrect">Correct</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> <span id="lgClose"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2e2e2e;border:1px solid #444"></div> <span id="lgWrong"></span></div>
   </div>
   <div class="search-area">
     <div class="search-row">
-      <input type="text" id="carInput" placeholder="Tapez une marque ou un modèle..." autocomplete="off" />
-      <button id="guessBtn">Deviner</button>
+      <input type="text" id="carInput" autocomplete="off" />
+      <button id="guessBtn"></button>
     </div>
     <div id="suggestions" class="suggestions" style="display:none"></div>
   </div>
-  <div class="attempts-bar">
-    <span id="attemptsText">0 essai</span>
-    <span style="color:var(--border)">|</span>
-    <span class="db-info" id="dbInfo">Chargement...</span>
-  </div>
+  <div class="attempts-bar" id="attemptsText"></div>
   <div class="table-wrapper" id="tableWrapper" style="display:none">
     <table>
       <thead>
         <tr>
-          <th>Voiture</th>
-          <th>Pays</th>
-          <th>Catégorie</th>
-          <th>Années prod.</th>
-          <th>Puissance (ch)</th>
-          <th>Cylindres</th>
-          <th>Prix (k€)</th>
+          <th id="thCar"></th><th id="thCountry"></th><th id="thCat"></th>
+          <th id="thYear"></th><th id="thPower"></th><th id="thCyl"></th><th id="thPrice"></th>
         </tr>
       </thead>
       <tbody id="guessesBody"></tbody>
@@ -111,11 +130,38 @@
 </main>
 
 <script>
-// =============================================
-// BASE DE DONNÉES — 300+ voitures
-// =============================================
+// ── TRANSLATIONS ──────────────────────────────────────────────
+const T = {
+  fr: {
+    tagline:'Devinez la voiture du jour', langLabel:'Langue :',
+    lgClose:'Proche (±10%)', lgWrong:'Faux',
+    placeholder:'Tapez une marque ou un modèle...', guessBtn:'Deviner',
+    attempts: n => n + ' essai' + (n > 1 ? 's' : ''),
+    thCar:'Voiture', thCountry:'Pays', thCat:'Catégorie',
+    thYear:'Année', thPower:'Puissance (ch)', thCyl:'Cylindres', thPrice:'Prix (k€)',
+    elec:'Élec.', power: cv => cv + ' ch',
+    winTitle: (name, year) => `Bravo ! C'était la ${name} (${year})`,
+    winSub: (n, cv, pays, cat) => `Trouvée en ${n} essai${n>1?'s':''} — ${cv} ch · ${pays} · ${cat}`,
+    nextIn:'Prochaine voiture dans :',
+  },
+  en: {
+    tagline:'Guess the car of the day', langLabel:'Language:',
+    lgClose:'Close (±10%)', lgWrong:'Wrong',
+    placeholder:'Type a brand or model...', guessBtn:'Guess',
+    attempts: n => n + ' guess' + (n > 1 ? 'es' : ''),
+    thCar:'Car', thCountry:'Country', thCat:'Category',
+    thYear:'Year', thPower:'Power (hp)', thCyl:'Cylinders', thPrice:'Price (k€)',
+    elec:'Elec.', power: cv => cv + ' hp',
+    winTitle: (name, year) => `Well done! It was the ${name} (${year})`,
+    winSub: (n, cv, pays, cat) => `Found in ${n} guess${n>1?'es':''} — ${cv} hp · ${pays} · ${cat}`,
+    nextIn:'Next car in:',
+  }
+};
+const PAYS_EN = {"Italie":"Italy","Allemagne":"Germany","France":"France","Royaume-Uni":"UK","États-Unis":"USA","Japon":"Japan","Suède":"Sweden","Croatie":"Croatia","Espagne":"Spain","Corée du Sud":"South Korea"};
+const CAT_EN  = {"Supercar":"Supercar","Hypercar":"Hypercar","GT":"GT","Sport":"Sports","Citadine":"City car","Compacte":"Hatchback","Compacte sport":"Hot hatch","Berline sport":"Sports sedan","Berline":"Sedan","Roadster":"Roadster","SUV sport":"Sports SUV","SUV de luxe":"Luxury SUV","SUV":"SUV","Muscle car":"Muscle car","Rallye":"Rally","Course":"Racing","Break sport":"Sports wagon","Berline de luxe":"Luxury sedan","GT de luxe":"Luxury GT","Cabriolet de luxe":"Luxury convertible","Pick-up":"Pickup"};
+
+// ── DATABASE ──────────────────────────────────────────────────
 const CARS = [
-  // FERRARI
   {name:"Ferrari 250 GTO",pays:"Italie",cat:"Supercar",annee:1962,cv:300,cyl:12,carbu:"Essence",prix:18000},
   {name:"Ferrari 308 GTB",pays:"Italie",cat:"Supercar",annee:1975,cv:255,cyl:8,carbu:"Essence",prix:80},
   {name:"Ferrari Testarossa",pays:"Italie",cat:"Supercar",annee:1984,cv:390,cyl:12,carbu:"Essence",prix:120},
@@ -131,7 +177,6 @@ const CARS = [
   {name:"Ferrari SF90 Stradale",pays:"Italie",cat:"Hypercar",annee:2019,cv:1000,cyl:8,carbu:"Hybride",prix:500},
   {name:"Ferrari Roma",pays:"Italie",cat:"GT",annee:2020,cv:620,cyl:8,carbu:"Essence",prix:220},
   {name:"Ferrari 296 GTB",pays:"Italie",cat:"Supercar",annee:2021,cv:830,cyl:6,carbu:"Hybride",prix:270},
-  // LAMBORGHINI
   {name:"Lamborghini Miura",pays:"Italie",cat:"Supercar",annee:1966,cv:350,cyl:12,carbu:"Essence",prix:200},
   {name:"Lamborghini Countach",pays:"Italie",cat:"Supercar",annee:1974,cv:375,cyl:12,carbu:"Essence",prix:150},
   {name:"Lamborghini Diablo",pays:"Italie",cat:"Supercar",annee:1990,cv:492,cyl:12,carbu:"Essence",prix:240},
@@ -141,7 +186,6 @@ const CARS = [
   {name:"Lamborghini Huracán",pays:"Italie",cat:"Supercar",annee:2014,cv:610,cyl:10,carbu:"Essence",prix:200},
   {name:"Lamborghini Urus",pays:"Italie",cat:"SUV sport",annee:2018,cv:650,cyl:8,carbu:"Essence",prix:190},
   {name:"Lamborghini Revuelto",pays:"Italie",cat:"Hypercar",annee:2023,cv:1015,cyl:12,carbu:"Hybride",prix:550},
-  // PORSCHE
   {name:"Porsche 356",pays:"Allemagne",cat:"Sport",annee:1948,cv:60,cyl:4,carbu:"Essence",prix:20},
   {name:"Porsche 911 2.0",pays:"Allemagne",cat:"Sport",annee:1963,cv:130,cyl:6,carbu:"Essence",prix:25},
   {name:"Porsche 914",pays:"Allemagne",cat:"Sport",annee:1969,cv:100,cyl:4,carbu:"Essence",prix:15},
@@ -159,7 +203,6 @@ const CARS = [
   {name:"Porsche 911 Carrera",pays:"Allemagne",cat:"Sport",annee:2019,cv:385,cyl:6,carbu:"Essence",prix:115},
   {name:"Porsche Taycan",pays:"Allemagne",cat:"Berline",annee:2019,cv:571,cyl:0,carbu:"Électrique",prix:105},
   {name:"Porsche 911 GT3 RS",pays:"Allemagne",cat:"Sport",annee:2022,cv:525,cyl:6,carbu:"Essence",prix:230},
-  // McLAREN
   {name:"McLaren F1",pays:"Royaume-Uni",cat:"Hypercar",annee:1992,cv:627,cyl:12,carbu:"Essence",prix:15000},
   {name:"McLaren MP4-12C",pays:"Royaume-Uni",cat:"Supercar",annee:2011,cv:592,cyl:8,carbu:"Essence",prix:175},
   {name:"McLaren P1",pays:"Royaume-Uni",cat:"Hypercar",annee:2013,cv:916,cyl:8,carbu:"Hybride",prix:1150},
@@ -169,7 +212,6 @@ const CARS = [
   {name:"McLaren Senna",pays:"Royaume-Uni",cat:"Hypercar",annee:2018,cv:800,cyl:8,carbu:"Essence",prix:800},
   {name:"McLaren Speedtail",pays:"Royaume-Uni",cat:"Hypercar",annee:2020,cv:1055,cyl:8,carbu:"Hybride",prix:2100},
   {name:"McLaren Artura",pays:"Royaume-Uni",cat:"Supercar",annee:2021,cv:680,cyl:6,carbu:"Hybride",prix:230},
-  // BUGATTI
   {name:"Bugatti Type 35",pays:"France",cat:"Course",annee:1924,cv:95,cyl:8,carbu:"Essence",prix:50},
   {name:"Bugatti EB110",pays:"France",cat:"Hypercar",annee:1991,cv:560,cyl:12,carbu:"Essence",prix:350},
   {name:"Bugatti Veyron",pays:"France",cat:"Hypercar",annee:2005,cv:1001,cyl:16,carbu:"Essence",prix:1200},
@@ -177,7 +219,6 @@ const CARS = [
   {name:"Bugatti Divo",pays:"France",cat:"Hypercar",annee:2018,cv:1500,cyl:16,carbu:"Essence",prix:5000},
   {name:"Bugatti Bolide",pays:"France",cat:"Hypercar",annee:2021,cv:1825,cyl:16,carbu:"Essence",prix:4000},
   {name:"Bugatti Tourbillon",pays:"France",cat:"Hypercar",annee:2024,cv:1800,cyl:8,carbu:"Hybride",prix:3800},
-  // ASTON MARTIN
   {name:"Aston Martin DB4",pays:"Royaume-Uni",cat:"GT",annee:1958,cv:240,cyl:6,carbu:"Essence",prix:80},
   {name:"Aston Martin DB5",pays:"Royaume-Uni",cat:"GT",annee:1963,cv:282,cyl:6,carbu:"Essence",prix:100},
   {name:"Aston Martin V8 Vantage",pays:"Royaume-Uni",cat:"GT",annee:1977,cv:340,cyl:8,carbu:"Essence",prix:90},
@@ -187,7 +228,6 @@ const CARS = [
   {name:"Aston Martin DB11",pays:"Royaume-Uni",cat:"GT",annee:2016,cv:510,cyl:12,carbu:"Essence",prix:195},
   {name:"Aston Martin Valkyrie",pays:"Royaume-Uni",cat:"Hypercar",annee:2019,cv:1160,cyl:12,carbu:"Hybride",prix:3000},
   {name:"Aston Martin DBX",pays:"Royaume-Uni",cat:"SUV sport",annee:2020,cv:550,cyl:8,carbu:"Essence",prix:180},
-  // BMW
   {name:"BMW 2002",pays:"Allemagne",cat:"Compacte",annee:1968,cv:100,cyl:4,carbu:"Essence",prix:15},
   {name:"BMW M1",pays:"Allemagne",cat:"Supercar",annee:1978,cv:277,cyl:6,carbu:"Essence",prix:80},
   {name:"BMW E30 M3",pays:"Allemagne",cat:"Compacte sport",annee:1986,cv:200,cyl:4,carbu:"Essence",prix:35},
@@ -201,7 +241,6 @@ const CARS = [
   {name:"BMW M3",pays:"Allemagne",cat:"Berline sport",annee:2021,cv:510,cyl:6,carbu:"Essence",prix:85},
   {name:"BMW M4 CSL",pays:"Allemagne",cat:"Berline sport",annee:2022,cv:550,cyl:6,carbu:"Essence",prix:140},
   {name:"BMW iX M60",pays:"Allemagne",cat:"SUV",annee:2022,cv:610,cyl:0,carbu:"Électrique",prix:130},
-  // MERCEDES
   {name:"Mercedes 300 SL Gullwing",pays:"Allemagne",cat:"GT",annee:1954,cv:215,cyl:6,carbu:"Essence",prix:200},
   {name:"Mercedes 190E 2.3-16",pays:"Allemagne",cat:"Berline sport",annee:1984,cv:185,cyl:4,carbu:"Essence",prix:40},
   {name:"Mercedes SL 500",pays:"Allemagne",cat:"Roadster",annee:1989,cv:326,cyl:8,carbu:"Essence",prix:100},
@@ -212,7 +251,6 @@ const CARS = [
   {name:"Mercedes-AMG GT R",pays:"Allemagne",cat:"Sport",annee:2016,cv:585,cyl:8,carbu:"Essence",prix:200},
   {name:"Mercedes-AMG One",pays:"Allemagne",cat:"Hypercar",annee:2021,cv:1063,cyl:4,carbu:"Hybride",prix:2700},
   {name:"Mercedes EQS",pays:"Allemagne",cat:"Berline",annee:2021,cv:523,cyl:0,carbu:"Électrique",prix:110},
-  // AUDI
   {name:"Audi Quattro",pays:"Allemagne",cat:"Rallye",annee:1980,cv:200,cyl:5,carbu:"Essence",prix:30},
   {name:"Audi 200 Quattro",pays:"Allemagne",cat:"Berline",annee:1983,cv:200,cyl:5,carbu:"Essence",prix:35},
   {name:"Audi RS2",pays:"Allemagne",cat:"Break sport",annee:1994,cv:315,cyl:5,carbu:"Essence",prix:45},
@@ -221,14 +259,12 @@ const CARS = [
   {name:"Audi R8 V10",pays:"Allemagne",cat:"Supercar",annee:2015,cv:540,cyl:10,carbu:"Essence",prix:170},
   {name:"Audi RS6",pays:"Allemagne",cat:"Break sport",annee:2019,cv:600,cyl:8,carbu:"Essence",prix:120},
   {name:"Audi e-tron GT RS",pays:"Allemagne",cat:"Berline sport",annee:2021,cv:646,cyl:0,carbu:"Électrique",prix:150},
-  // VOLKSWAGEN
   {name:"Volkswagen Beetle",pays:"Allemagne",cat:"Citadine",annee:1938,cv:25,cyl:4,carbu:"Essence",prix:5},
   {name:"Volkswagen Golf GTI Mk1",pays:"Allemagne",cat:"Compacte",annee:1976,cv:110,cyl:4,carbu:"Essence",prix:10},
   {name:"Volkswagen Corrado",pays:"Allemagne",cat:"Sport",annee:1988,cv:160,cyl:4,carbu:"Essence",prix:25},
   {name:"Volkswagen Golf R32",pays:"Allemagne",cat:"Compacte",annee:2002,cv:241,cyl:6,carbu:"Essence",prix:35},
   {name:"Volkswagen Golf GTI",pays:"Allemagne",cat:"Compacte",annee:2021,cv:245,cyl:4,carbu:"Essence",prix:38},
   {name:"Volkswagen ID.4",pays:"Allemagne",cat:"SUV",annee:2020,cv:204,cyl:0,carbu:"Électrique",prix:45},
-  // FORD
   {name:"Ford Model T",pays:"États-Unis",cat:"Berline",annee:1908,cv:20,cyl:4,carbu:"Essence",prix:1},
   {name:"Ford Mustang 1ère gen",pays:"États-Unis",cat:"Muscle car",annee:1964,cv:271,cyl:8,carbu:"Essence",prix:10},
   {name:"Ford GT40",pays:"États-Unis",cat:"Course",annee:1964,cv:485,cyl:8,carbu:"Essence",prix:50},
@@ -239,7 +275,6 @@ const CARS = [
   {name:"Ford GT 2016",pays:"États-Unis",cat:"Supercar",annee:2016,cv:647,cyl:6,carbu:"Essence",prix:450},
   {name:"Ford Bronco",pays:"États-Unis",cat:"SUV",annee:2021,cv:314,cyl:6,carbu:"Essence",prix:45},
   {name:"Ford Mustang Mach-E",pays:"États-Unis",cat:"SUV",annee:2020,cv:358,cyl:0,carbu:"Électrique",prix:55},
-  // CHEVROLET
   {name:"Chevrolet Corvette C1",pays:"États-Unis",cat:"Sport",annee:1953,cv:150,cyl:6,carbu:"Essence",prix:10},
   {name:"Chevrolet Camaro 1ère gen",pays:"États-Unis",cat:"Muscle car",annee:1966,cv:295,cyl:8,carbu:"Essence",prix:8},
   {name:"Chevrolet Corvette C3",pays:"États-Unis",cat:"Sport",annee:1968,cv:300,cyl:8,carbu:"Essence",prix:12},
@@ -247,13 +282,11 @@ const CARS = [
   {name:"Chevrolet Corvette C6 ZR1",pays:"États-Unis",cat:"Supercar",annee:2008,cv:638,cyl:8,carbu:"Essence",prix:110},
   {name:"Chevrolet Corvette C8",pays:"États-Unis",cat:"Sport",annee:2020,cv:502,cyl:8,carbu:"Essence",prix:65},
   {name:"Chevrolet Camaro ZL1",pays:"États-Unis",cat:"Muscle car",annee:2017,cv:650,cyl:8,carbu:"Essence",prix:65},
-  // DODGE
   {name:"Dodge Charger Daytona",pays:"États-Unis",cat:"Muscle car",annee:1969,cv:425,cyl:8,carbu:"Essence",prix:8},
   {name:"Dodge Viper",pays:"États-Unis",cat:"Supercar",annee:1992,cv:400,cyl:10,carbu:"Essence",prix:60},
   {name:"Dodge Viper ACR",pays:"États-Unis",cat:"Supercar",annee:2015,cv:645,cyl:10,carbu:"Essence",prix:120},
   {name:"Dodge Challenger Hellcat",pays:"États-Unis",cat:"Muscle car",annee:2015,cv:717,cyl:8,carbu:"Essence",prix:65},
   {name:"Dodge Demon",pays:"États-Unis",cat:"Muscle car",annee:2018,cv:840,cyl:8,carbu:"Essence",prix:85},
-  // TOYOTA
   {name:"Toyota 2000GT",pays:"Japon",cat:"Sport",annee:1967,cv:150,cyl:6,carbu:"Essence",prix:30},
   {name:"Toyota Celica",pays:"Japon",cat:"Sport",annee:1970,cv:97,cyl:4,carbu:"Essence",prix:12},
   {name:"Toyota Supra Mk3",pays:"Japon",cat:"Sport",annee:1986,cv:230,cyl:6,carbu:"Essence",prix:25},
@@ -262,42 +295,35 @@ const CARS = [
   {name:"Toyota GR Yaris",pays:"Japon",cat:"Compacte sport",annee:2020,cv:261,cyl:3,carbu:"Essence",prix:38},
   {name:"Toyota Supra",pays:"Japon",cat:"Sport",annee:2019,cv:340,cyl:6,carbu:"Essence",prix:55},
   {name:"Toyota Land Cruiser",pays:"Japon",cat:"SUV",annee:1951,cv:105,cyl:6,carbu:"Essence",prix:70},
-  // NISSAN
   {name:"Nissan Skyline GT-R R32",pays:"Japon",cat:"Berline sport",annee:1989,cv:280,cyl:6,carbu:"Essence",prix:35},
   {name:"Nissan Skyline GT-R R34",pays:"Japon",cat:"Berline sport",annee:1999,cv:280,cyl:6,carbu:"Essence",prix:80},
   {name:"Nissan GT-R R35",pays:"Japon",cat:"Supercar",annee:2007,cv:570,cyl:6,carbu:"Essence",prix:115},
   {name:"Nissan 370Z",pays:"Japon",cat:"Sport",annee:2009,cv:328,cyl:6,carbu:"Essence",prix:35},
   {name:"Nissan Leaf",pays:"Japon",cat:"Citadine",annee:2010,cv:109,cyl:0,carbu:"Électrique",prix:32},
   {name:"Nissan Z",pays:"Japon",cat:"Sport",annee:2022,cv:400,cyl:6,carbu:"Essence",prix:40},
-  // HONDA
   {name:"Honda S600",pays:"Japon",cat:"Roadster",annee:1964,cv:57,cyl:4,carbu:"Essence",prix:5},
   {name:"Honda NSX",pays:"Japon",cat:"Supercar",annee:1990,cv:270,cyl:6,carbu:"Essence",prix:60},
   {name:"Honda Civic Type R EK9",pays:"Japon",cat:"Compacte sport",annee:1997,cv:185,cyl:4,carbu:"Essence",prix:25},
   {name:"Honda S2000",pays:"Japon",cat:"Roadster",annee:1999,cv:240,cyl:4,carbu:"Essence",prix:30},
   {name:"Honda NSX 2016",pays:"Japon",cat:"Supercar",annee:2016,cv:581,cyl:6,carbu:"Hybride",prix:175},
   {name:"Honda Civic Type R FK8",pays:"Japon",cat:"Compacte sport",annee:2017,cv:320,cyl:4,carbu:"Essence",prix:36},
-  // MAZDA
   {name:"Mazda Cosmo",pays:"Japon",cat:"Sport",annee:1967,cv:110,cyl:2,carbu:"Essence",prix:10},
   {name:"Mazda RX-7 FC",pays:"Japon",cat:"Sport",annee:1985,cv:150,cyl:2,carbu:"Essence",prix:20},
   {name:"Mazda RX-7 FD",pays:"Japon",cat:"Sport",annee:1991,cv:255,cyl:2,carbu:"Essence",prix:35},
   {name:"Mazda MX-5 NA",pays:"Japon",cat:"Roadster",annee:1989,cv:115,cyl:4,carbu:"Essence",prix:15},
   {name:"Mazda MX-5",pays:"Japon",cat:"Roadster",annee:2015,cv:131,cyl:4,carbu:"Essence",prix:28},
   {name:"Mazda RX-8",pays:"Japon",cat:"Sport",annee:2003,cv:231,cyl:2,carbu:"Essence",prix:28},
-  // SUBARU
   {name:"Subaru Impreza WRX STI",pays:"Japon",cat:"Compacte",annee:1994,cv:280,cyl:4,carbu:"Essence",prix:30},
   {name:"Subaru Impreza WRX STI 2007",pays:"Japon",cat:"Compacte",annee:2007,cv:300,cyl:4,carbu:"Essence",prix:38},
   {name:"Subaru BRZ",pays:"Japon",cat:"Sport",annee:2012,cv:200,cyl:4,carbu:"Essence",prix:30},
   {name:"Subaru WRX STI S209",pays:"Japon",cat:"Compacte sport",annee:2019,cv:341,cyl:4,carbu:"Essence",prix:55},
-  // MITSUBISHI
   {name:"Mitsubishi Lancer Evo I",pays:"Japon",cat:"Compacte",annee:1992,cv:250,cyl:4,carbu:"Essence",prix:20},
   {name:"Mitsubishi Lancer Evo VI TME",pays:"Japon",cat:"Compacte",annee:1999,cv:280,cyl:4,carbu:"Essence",prix:35},
   {name:"Mitsubishi Lancer Evo X",pays:"Japon",cat:"Compacte",annee:2007,cv:295,cyl:4,carbu:"Essence",prix:40},
   {name:"Mitsubishi Eclipse",pays:"Japon",cat:"Sport",annee:1989,cv:195,cyl:4,carbu:"Essence",prix:18},
-  // LEXUS
   {name:"Lexus LFA",pays:"Japon",cat:"Supercar",annee:2010,cv:560,cyl:10,carbu:"Essence",prix:375},
   {name:"Lexus RC F",pays:"Japon",cat:"Sport",annee:2014,cv:481,cyl:8,carbu:"Essence",prix:75},
   {name:"Lexus LC 500",pays:"Japon",cat:"GT",annee:2017,cv:477,cyl:8,carbu:"Essence",prix:95},
-  // RENAULT
   {name:"Renault Alpine A110 1600S",pays:"France",cat:"Sport",annee:1968,cv:138,cyl:4,carbu:"Essence",prix:10},
   {name:"Renault 5 Turbo",pays:"France",cat:"Rallye",annee:1980,cv:160,cyl:4,carbu:"Essence",prix:15},
   {name:"Renault Clio Williams",pays:"France",cat:"Compacte sport",annee:1993,cv:150,cyl:4,carbu:"Essence",prix:18},
@@ -306,44 +332,36 @@ const CARS = [
   {name:"Renault Mégane RS Trophy-R",pays:"France",cat:"Compacte sport",annee:2019,cv:300,cyl:4,carbu:"Essence",prix:45},
   {name:"Renault Clio",pays:"France",cat:"Citadine",annee:2019,cv:100,cyl:4,carbu:"Essence",prix:18},
   {name:"Renault Zoe",pays:"France",cat:"Citadine",annee:2012,cv:135,cyl:0,carbu:"Électrique",prix:32},
-  // PEUGEOT
   {name:"Peugeot 205 GTI",pays:"France",cat:"Compacte sport",annee:1984,cv:130,cyl:4,carbu:"Essence",prix:8},
   {name:"Peugeot 405 Mi16",pays:"France",cat:"Berline sport",annee:1988,cv:160,cyl:4,carbu:"Essence",prix:18},
   {name:"Peugeot 306 Maxi",pays:"France",cat:"Rallye",annee:1998,cv:280,cyl:4,carbu:"Essence",prix:20},
   {name:"Peugeot 206 WRC",pays:"France",cat:"Rallye",annee:1999,cv:300,cyl:4,carbu:"Essence",prix:25},
   {name:"Peugeot 308 GTi",pays:"France",cat:"Compacte sport",annee:2015,cv:270,cyl:4,carbu:"Essence",prix:36},
   {name:"Peugeot 508 PSE",pays:"France",cat:"Berline sport",annee:2021,cv:360,cyl:4,carbu:"Hybride",prix:65},
-  // CITROËN
   {name:"Citroën DS",pays:"France",cat:"Berline",annee:1955,cv:75,cyl:4,carbu:"Essence",prix:8},
   {name:"Citroën SM",pays:"France",cat:"GT",annee:1970,cv:170,cyl:6,carbu:"Essence",prix:15},
   {name:"Citroën Xsara WRC",pays:"France",cat:"Rallye",annee:2001,cv:300,cyl:4,carbu:"Essence",prix:25},
   {name:"Citroën C2 VTS",pays:"France",cat:"Compacte sport",annee:2003,cv:125,cyl:4,carbu:"Essence",prix:16},
-  // ALPINE
   {name:"Alpine A110",pays:"France",cat:"Sport",annee:2017,cv:252,cyl:4,carbu:"Essence",prix:65},
   {name:"Alpine A110 R",pays:"France",cat:"Sport",annee:2022,cv:300,cyl:4,carbu:"Essence",prix:100},
-  // KOENIGSEGG
   {name:"Koenigsegg CC8S",pays:"Suède",cat:"Hypercar",annee:2002,cv:655,cyl:8,carbu:"Essence",prix:600},
   {name:"Koenigsegg CCX",pays:"Suède",cat:"Hypercar",annee:2006,cv:806,cyl:8,carbu:"Essence",prix:700},
   {name:"Koenigsegg Agera R",pays:"Suède",cat:"Hypercar",annee:2011,cv:1140,cyl:8,carbu:"Essence",prix:1600},
   {name:"Koenigsegg One:1",pays:"Suède",cat:"Hypercar",annee:2014,cv:1341,cyl:8,carbu:"Essence",prix:1900},
   {name:"Koenigsegg Jesko",pays:"Suède",cat:"Hypercar",annee:2020,cv:1600,cyl:8,carbu:"Essence",prix:2500},
   {name:"Koenigsegg Gemera",pays:"Suède",cat:"Hypercar",annee:2020,cv:1700,cyl:3,carbu:"Hybride",prix:1700},
-  // PAGANI
   {name:"Pagani Zonda C12",pays:"Italie",cat:"Hypercar",annee:1999,cv:394,cyl:12,carbu:"Essence",prix:300},
   {name:"Pagani Zonda F",pays:"Italie",cat:"Hypercar",annee:2005,cv:602,cyl:12,carbu:"Essence",prix:700},
   {name:"Pagani Huayra",pays:"Italie",cat:"Hypercar",annee:2011,cv:730,cyl:12,carbu:"Essence",prix:1200},
   {name:"Pagani Utopia",pays:"Italie",cat:"Hypercar",annee:2022,cv:864,cyl:12,carbu:"Essence",prix:2200},
-  // RIMAC
   {name:"Rimac Concept One",pays:"Croatie",cat:"Hypercar",annee:2013,cv:1088,cyl:0,carbu:"Électrique",prix:980},
   {name:"Rimac Nevera",pays:"Croatie",cat:"Hypercar",annee:2021,cv:1914,cyl:0,carbu:"Électrique",prix:2100},
-  // TESLA
   {name:"Tesla Roadster",pays:"États-Unis",cat:"Roadster",annee:2008,cv:248,cyl:0,carbu:"Électrique",prix:110},
   {name:"Tesla Model S",pays:"États-Unis",cat:"Berline",annee:2012,cv:416,cyl:0,carbu:"Électrique",prix:80},
   {name:"Tesla Model S Plaid",pays:"États-Unis",cat:"Berline",annee:2021,cv:1020,cyl:0,carbu:"Électrique",prix:130},
   {name:"Tesla Model 3",pays:"États-Unis",cat:"Berline",annee:2017,cv:283,cyl:0,carbu:"Électrique",prix:45},
   {name:"Tesla Model X",pays:"États-Unis",cat:"SUV",annee:2015,cv:670,cyl:0,carbu:"Électrique",prix:95},
   {name:"Tesla Cybertruck",pays:"États-Unis",cat:"Pick-up",annee:2023,cv:845,cyl:0,carbu:"Électrique",prix:80},
-  // ALFA ROMEO
   {name:"Alfa Romeo Giulia Sprint GTA",pays:"Italie",cat:"Sport",annee:1965,cv:170,cyl:4,carbu:"Essence",prix:20},
   {name:"Alfa Romeo Montreal",pays:"Italie",cat:"GT",annee:1970,cv:200,cyl:8,carbu:"Essence",prix:15},
   {name:"Alfa Romeo GTV6",pays:"Italie",cat:"GT",annee:1980,cv:158,cyl:6,carbu:"Essence",prix:20},
@@ -351,56 +369,46 @@ const CARS = [
   {name:"Alfa Romeo 8C Competizione",pays:"Italie",cat:"Supercar",annee:2007,cv:450,cyl:8,carbu:"Essence",prix:140},
   {name:"Alfa Romeo Giulia QV",pays:"Italie",cat:"Berline sport",annee:2016,cv:510,cyl:6,carbu:"Essence",prix:80},
   {name:"Alfa Romeo 4C",pays:"Italie",cat:"Sport",annee:2013,cv:240,cyl:4,carbu:"Essence",prix:65},
-  // MASERATI
   {name:"Maserati 250F",pays:"Italie",cat:"Course",annee:1954,cv:240,cyl:6,carbu:"Essence",prix:100},
   {name:"Maserati Bora",pays:"Italie",cat:"GT",annee:1971,cv:310,cyl:8,carbu:"Essence",prix:30},
   {name:"Maserati GranTurismo",pays:"Italie",cat:"GT",annee:2007,cv:405,cyl:8,carbu:"Essence",prix:120},
   {name:"Maserati MC20",pays:"Italie",cat:"Supercar",annee:2020,cv:630,cyl:6,carbu:"Essence",prix:220},
-  // LOTUS
   {name:"Lotus Elan",pays:"Royaume-Uni",cat:"Roadster",annee:1962,cv:105,cyl:4,carbu:"Essence",prix:8},
   {name:"Lotus Esprit S1",pays:"Royaume-Uni",cat:"Sport",annee:1976,cv:160,cyl:4,carbu:"Essence",prix:15},
   {name:"Lotus Esprit Turbo",pays:"Royaume-Uni",cat:"Sport",annee:1980,cv:210,cyl:4,carbu:"Essence",prix:25},
   {name:"Lotus Elise",pays:"Royaume-Uni",cat:"Roadster",annee:1996,cv:120,cyl:4,carbu:"Essence",prix:28},
   {name:"Lotus Exige",pays:"Royaume-Uni",cat:"Sport",annee:2000,cv:192,cyl:4,carbu:"Essence",prix:40},
   {name:"Lotus Evija",pays:"Royaume-Uni",cat:"Hypercar",annee:2020,cv:2000,cyl:0,carbu:"Électrique",prix:1800},
-  // JAGUAR
   {name:"Jaguar E-Type",pays:"Royaume-Uni",cat:"GT",annee:1961,cv:265,cyl:6,carbu:"Essence",prix:30},
   {name:"Jaguar XJS",pays:"Royaume-Uni",cat:"GT",annee:1975,cv:295,cyl:12,carbu:"Essence",prix:25},
   {name:"Jaguar XK8",pays:"Royaume-Uni",cat:"GT",annee:1996,cv:290,cyl:8,carbu:"Essence",prix:70},
   {name:"Jaguar XKR-S",pays:"Royaume-Uni",cat:"Sport",annee:2011,cv:550,cyl:8,carbu:"Essence",prix:95},
   {name:"Jaguar F-Type R",pays:"Royaume-Uni",cat:"Sport",annee:2013,cv:550,cyl:8,carbu:"Essence",prix:100},
   {name:"Jaguar I-Pace",pays:"Royaume-Uni",cat:"SUV",annee:2018,cv:400,cyl:0,carbu:"Électrique",prix:75},
-  // BENTLEY
   {name:"Bentley Mulsanne",pays:"Royaume-Uni",cat:"Berline de luxe",annee:2010,cv:512,cyl:8,carbu:"Essence",prix:280},
   {name:"Bentley Continental GT",pays:"Royaume-Uni",cat:"GT",annee:2003,cv:560,cyl:12,carbu:"Essence",prix:210},
   {name:"Bentley Bentayga",pays:"Royaume-Uni",cat:"SUV de luxe",annee:2015,cv:608,cyl:8,carbu:"Essence",prix:200},
-  // ROLLS-ROYCE
   {name:"Rolls-Royce Silver Shadow",pays:"Royaume-Uni",cat:"Berline de luxe",annee:1965,cv:200,cyl:8,carbu:"Essence",prix:60},
   {name:"Rolls-Royce Corniche",pays:"Royaume-Uni",cat:"Cabriolet de luxe",annee:1971,cv:220,cyl:8,carbu:"Essence",prix:80},
   {name:"Rolls-Royce Ghost",pays:"Royaume-Uni",cat:"Berline de luxe",annee:2009,cv:570,cyl:12,carbu:"Essence",prix:250},
   {name:"Rolls-Royce Wraith",pays:"Royaume-Uni",cat:"GT de luxe",annee:2013,cv:632,cyl:12,carbu:"Essence",prix:280},
   {name:"Rolls-Royce Spectre",pays:"Royaume-Uni",cat:"GT de luxe",annee:2023,cv:584,cyl:0,carbu:"Électrique",prix:330},
-  // SEAT / CUPRA
   {name:"Seat León Cupra R",pays:"Espagne",cat:"Compacte sport",annee:2019,cv:300,cyl:4,carbu:"Essence",prix:38},
   {name:"Cupra Born",pays:"Espagne",cat:"Compacte",annee:2021,cv:231,cyl:0,carbu:"Électrique",prix:42},
   {name:"Cupra Formentor VZ5",pays:"Espagne",cat:"SUV sport",annee:2021,cv:390,cyl:5,carbu:"Essence",prix:60},
-  // HYUNDAI / KIA
   {name:"Hyundai i30 N",pays:"Corée du Sud",cat:"Compacte sport",annee:2017,cv:275,cyl:4,carbu:"Essence",prix:35},
   {name:"Hyundai Ioniq 5 N",pays:"Corée du Sud",cat:"Compacte sport",annee:2023,cv:650,cyl:0,carbu:"Électrique",prix:65},
   {name:"Kia Stinger GT",pays:"Corée du Sud",cat:"Berline sport",annee:2017,cv:365,cyl:6,carbu:"Essence",prix:50},
   {name:"Kia EV6 GT",pays:"Corée du Sud",cat:"Berline sport",annee:2022,cv:585,cyl:0,carbu:"Électrique",prix:65},
-  // VOLVO
   {name:"Volvo Amazon",pays:"Suède",cat:"Berline",annee:1956,cv:85,cyl:4,carbu:"Essence",prix:5},
   {name:"Volvo 240 Turbo",pays:"Suède",cat:"Berline",annee:1981,cv:155,cyl:4,carbu:"Essence",prix:15},
   {name:"Volvo 850 T5-R",pays:"Suède",cat:"Break sport",annee:1994,cv:240,cyl:5,carbu:"Essence",prix:30},
   {name:"Volvo C30 Polestar",pays:"Suède",cat:"Compacte sport",annee:2012,cv:280,cyl:5,carbu:"Essence",prix:40},
   {name:"Polestar 1",pays:"Suède",cat:"GT",annee:2019,cv:609,cyl:4,carbu:"Hybride",prix:140},
   {name:"Polestar 2",pays:"Suède",cat:"Berline",annee:2020,cv:408,cyl:0,carbu:"Électrique",prix:55},
-  // SAAB
   {name:"Saab Sonett",pays:"Suède",cat:"Sport",annee:1966,cv:60,cyl:3,carbu:"Essence",prix:4},
   {name:"Saab 900 Turbo",pays:"Suède",cat:"Compacte",annee:1978,cv:143,cyl:4,carbu:"Essence",prix:15},
   {name:"Saab 9-3 Viggen",pays:"Suède",cat:"Compacte sport",annee:1998,cv:230,cyl:4,carbu:"Essence",prix:28},
-  // FIAT
   {name:"Fiat 500 L",pays:"Italie",cat:"Citadine",annee:1968,cv:18,cyl:2,carbu:"Essence",prix:10},
   {name:"Fiat X1/9",pays:"Italie",cat:"Sport",annee:1972,cv:75,cyl:4,carbu:"Essence",prix:12},
   {name:"Fiat Uno Turbo ie",pays:"Italie",cat:"Compacte sport",annee:1985,cv:105,cyl:4,carbu:"Essence",prix:15},
@@ -408,102 +416,181 @@ const CARS = [
   {name:"Fiat 500e",pays:"Italie",cat:"Citadine",annee:2020,cv:118,cyl:0,carbu:"Électrique",prix:35},
 ];
 
-const seed = Math.floor(Date.now() / 86400000);
-const target = CARS[seed % CARS.length];
+// ── STATE & STORAGE ───────────────────────────────────────────
+const TODAY = Math.floor(Date.now() / 86400000);
+const STORAGE_KEY = 'cardle_state';
+const target = CARS[TODAY % CARS.length];
+
+let lang = localStorage.getItem('cardle_lang') || 'fr';
 let guesses = [];
 let gameOver = false;
+let countdownInterval = null;
 
-document.getElementById('dbInfo').textContent = CARS.length + ' voitures disponibles';
-
-const input = document.getElementById('carInput');
-const suggestionsDiv = document.getElementById('suggestions');
-const tableWrapper = document.getElementById('tableWrapper');
-const guessesBody = document.getElementById('guessesBody');
-const attemptsText = document.getElementById('attemptsText');
-const banner = document.getElementById('banner');
-
-function isClose(val, tgt, field) {
-  if (field === 'annee') return Math.abs(val - tgt) <= 5;
-  if (field === 'cv') return tgt > 0 && Math.abs(val - tgt) / tgt <= 0.10;
-  if (field === 'cyl') return Math.abs(val - tgt) <= 1;
-  if (field === 'prix') return tgt > 0 && Math.abs(val - tgt) / tgt <= 0.10;
-  return false;
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    if (state.day !== TODAY) return;
+    guesses = state.guesses || [];
+    gameOver = state.gameOver || false;
+  } catch(e) {}
 }
 
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ day: TODAY, guesses, gameOver }));
+}
+
+// ── LANGUAGE ──────────────────────────────────────────────────
+function t(key, ...args) {
+  const val = T[lang][key];
+  return typeof val === 'function' ? val(...args) : val;
+}
+function dPays(pays) { return lang === 'en' ? (PAYS_EN[pays] || pays) : pays; }
+function dCat(cat)   { return lang === 'en' ? (CAT_EN[cat]  || cat)  : cat;  }
+function dPower(cv)  { return cv === 0 ? t('elec') : t('power', cv); }
+function dCyl(cyl)   { return cyl === 0 ? t('elec') : String(cyl); }
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('cardle_lang', l);
+  document.getElementById('btnFR').classList.toggle('active', l === 'fr');
+  document.getElementById('btnEN').classList.toggle('active', l === 'en');
+  applyUI();
+  renderAllGuesses();
+  if (gameOver) renderBanner();
+}
+
+function applyUI() {
+  document.getElementById('tagline').textContent      = t('tagline');
+  document.getElementById('langLabel').textContent    = t('langLabel');
+  document.getElementById('lgClose').textContent      = t('lgClose');
+  document.getElementById('lgWrong').textContent      = t('lgWrong');
+  document.getElementById('carInput').placeholder     = t('placeholder');
+  document.getElementById('guessBtn').textContent     = t('guessBtn');
+  document.getElementById('thCar').textContent        = t('thCar');
+  document.getElementById('thCountry').textContent    = t('thCountry');
+  document.getElementById('thCat').textContent        = t('thCat');
+  document.getElementById('thYear').textContent       = t('thYear');
+  document.getElementById('thPower').textContent      = t('thPower');
+  document.getElementById('thCyl').textContent        = t('thCyl');
+  document.getElementById('thPrice').textContent      = t('thPrice');
+  document.getElementById('attemptsText').textContent = t('attempts', guesses.length);
+}
+
+// ── GAME LOGIC ────────────────────────────────────────────────
+function isClose(val, tgt, field) {
+  if (field === 'annee') return Math.abs(val - tgt) <= 5;
+  if (field === 'cv')    return tgt > 0 && Math.abs(val - tgt) / tgt <= 0.10;
+  if (field === 'cyl')   return Math.abs(val - tgt) <= 1;
+  if (field === 'prix')  return tgt > 0 && Math.abs(val - tgt) / tgt <= 0.10;
+  return false;
+}
 function arrow(val, tgt) {
   if (val < tgt) return '<span class="arrow-up">▲</span>';
   if (val > tgt) return '<span class="arrow-down">▼</span>';
   return '';
 }
-
 function chipClass(val, tgt, field) {
   if (typeof val === 'string') return val === tgt ? 'correct' : 'wrong';
   if (val === tgt) return 'correct';
-  if (isClose(val, tgt, field)) return 'close';
-  return 'wrong';
+  return isClose(val, tgt, field) ? 'close' : 'wrong';
 }
 
-function renderGuess(car) {
+function buildRow(car) {
   const fields = [
-    { val: car.pays, tgt: target.pays, display: car.pays, field: 'pays' },
-    { val: car.cat, tgt: target.cat, display: car.cat, field: 'cat' },
+    { val: car.pays, tgt: target.pays, display: dPays(car.pays), field: 'pays' },
+    { val: car.cat,  tgt: target.cat,  display: dCat(car.cat),   field: 'cat'  },
     { val: car.annee, tgt: target.annee, display: car.annee + ' ' + arrow(car.annee, target.annee), field: 'annee' },
-    { val: car.cv, tgt: target.cv, display: (car.cv === 0 ? 'Élec.' : car.cv + ' ch') + ' ' + arrow(car.cv, target.cv), field: 'cv' },
-    { val: car.cyl, tgt: target.cyl, display: car.cyl === 0 ? 'Élec.' : car.cyl + ' ' + arrow(car.cyl, target.cyl), field: 'cyl' },
-    { val: car.prix, tgt: target.prix, display: car.prix + 'k€' + ' ' + arrow(car.prix, target.prix), field: 'prix' },
+    { val: car.cv,   tgt: target.cv,   display: dPower(car.cv) + ' ' + arrow(car.cv, target.cv),   field: 'cv'   },
+    { val: car.cyl,  tgt: target.cyl,  display: dCyl(car.cyl) + (car.cyl > 0 ? ' ' + arrow(car.cyl, target.cyl) : ''), field: 'cyl' },
+    { val: car.prix, tgt: target.prix, display: car.prix + 'k€ ' + arrow(car.prix, target.prix),   field: 'prix' },
   ];
-
-  const cells = fields.map(f => {
-    const cls = chipClass(f.val, f.tgt, f.field);
-    return `<td><span class="chip ${cls}">${f.display}</span></td>`;
-  });
-
+  const cells = fields.map(f => `<td><span class="chip ${chipClass(f.val, f.tgt, f.field)}">${f.display}</span></td>`);
   const tr = document.createElement('tr');
   tr.innerHTML = `<td>${car.name}</td>${cells.join('')}`;
-  guessesBody.prepend(tr);
+  return tr;
+}
+
+function renderAllGuesses() {
+  const tbody = document.getElementById('guessesBody');
+  tbody.innerHTML = '';
+  const tw = document.getElementById('tableWrapper');
+  if (guesses.length === 0) { tw.style.display = 'none'; return; }
+  tw.style.display = '';
+  [...guesses].reverse().forEach(car => tbody.appendChild(buildRow(car)));
+}
+
+function renderBanner() {
+  const banner = document.getElementById('banner');
+  if (!gameOver) { banner.innerHTML = ''; return; }
+  const n = guesses.length;
+  banner.innerHTML = `<div class="banner win">
+    ${t('winTitle', target.name, target.annee)}
+    <span class="sub">${t('winSub', n, target.cv, dPays(target.pays), dCat(target.cat))}</span>
+    <div class="countdown-block">
+      <div class="countdown-label">${t('nextIn')}</div>
+      <div class="countdown-time" id="countdown">--:--:--</div>
+    </div>
+  </div>`;
+  startCountdown();
+}
+
+function startCountdown() {
+  if (countdownInterval) clearInterval(countdownInterval);
+  function tick() {
+    const el = document.getElementById('countdown');
+    if (!el) { clearInterval(countdownInterval); return; }
+    const diff = (TODAY + 1) * 86400000 - Date.now();
+    if (diff <= 0) { el.textContent = '00:00:00'; return; }
+    const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
+    const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+    const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+    el.textContent = `${h}:${m}:${s}`;
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+function disableInput() {
+  document.getElementById('carInput').disabled = true;
+  document.getElementById('guessBtn').disabled = true;
 }
 
 function submitGuess(car) {
   if (gameOver) return;
   if (guesses.find(g => g.name === car.name)) {
-    input.value = '';
-    suggestionsDiv.style.display = 'none';
+    document.getElementById('carInput').value = '';
+    document.getElementById('suggestions').style.display = 'none';
     return;
   }
   guesses.push(car);
-  tableWrapper.style.display = '';
-  const n = guesses.length;
-  attemptsText.textContent = n + ' essai' + (n > 1 ? 's' : '');
-  renderGuess(car);
+  saveState();
+  document.getElementById('attemptsText').textContent = t('attempts', guesses.length);
+  document.getElementById('tableWrapper').style.display = '';
+  document.getElementById('guessesBody').prepend(buildRow(car));
 
   if (car.name === target.name) {
     gameOver = true;
-    banner.innerHTML = `<div class="banner win">Bravo ! C'était la ${target.name} (${target.annee})<span class="sub">Trouvée en ${n} essai${n > 1 ? 's' : ''} — ${target.cv} ch · ${target.pays} · ${target.cat}</span><br><button class="new-game-btn" onclick="newGame()">Nouvelle partie</button></div>`;
+    saveState();
+    disableInput();
+    renderBanner();
   }
-  input.value = '';
-  suggestionsDiv.style.display = 'none';
+  document.getElementById('carInput').value = '';
+  document.getElementById('suggestions').style.display = 'none';
 }
 
-function newGame() {
-  guesses = [];
-  gameOver = false;
-  guessesBody.innerHTML = '';
-  tableWrapper.style.display = 'none';
-  banner.innerHTML = '';
-  attemptsText.textContent = '0 essai';
-  const newTarget = CARS[Math.floor(Math.random() * CARS.length)];
-  Object.assign(target, newTarget);
-}
+// ── AUTOCOMPLETE ──────────────────────────────────────────────
+const input = document.getElementById('carInput');
+const suggestionsDiv = document.getElementById('suggestions');
 
 input.addEventListener('input', () => {
   const q = input.value.trim().toLowerCase();
   if (!q || q.length < 2) { suggestionsDiv.style.display = 'none'; return; }
-  const matches = CARS.filter(c =>
-    c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name)
-  );
+  const matches = CARS.filter(c => c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name));
   if (!matches.length) { suggestionsDiv.style.display = 'none'; return; }
   suggestionsDiv.innerHTML = matches.slice(0, 10).map(c =>
-    `<div class="suggestion-item" data-name="${c.name}"><span>${c.name}</span><span class="s-year">${c.pays} · ${c.annee}</span></div>`
+    `<div class="suggestion-item" data-name="${c.name}"><span>${c.name}</span><span class="s-year">${dPays(c.pays)} · ${c.annee}</span></div>`
   ).join('');
   suggestionsDiv.style.display = '';
 });
@@ -519,9 +606,7 @@ document.getElementById('guessBtn').addEventListener('click', () => {
   const q = input.value.trim().toLowerCase();
   const matches = CARS.filter(c => c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name));
   if (matches.length === 1) submitGuess(matches[0]);
-  else if (matches.length > 1) {
-    suggestionsDiv.style.display = '';
-  }
+  else if (matches.length > 1) suggestionsDiv.style.display = '';
 });
 
 input.addEventListener('keydown', e => {
@@ -534,6 +619,17 @@ input.addEventListener('keydown', e => {
 document.addEventListener('click', e => {
   if (!e.target.closest('.search-area')) suggestionsDiv.style.display = 'none';
 });
+
+// ── INIT ──────────────────────────────────────────────────────
+loadState();
+setLang(lang); // applies translations + sets button state
+if (gameOver) {
+  disableInput();
+  renderAllGuesses();
+  renderBanner();
+} else if (guesses.length > 0) {
+  renderAllGuesses();
+}
 </script>
 </body>
 </html>
