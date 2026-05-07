@@ -14,16 +14,17 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
 
+  /* ── HEADER ── */
   header {
-    width: 100%; max-width: 900px; padding: 1.5rem 1rem 1rem;
+    width: 100%; max-width: 900px; padding: 1.2rem 1rem 1rem;
     display: flex; flex-direction: column; align-items: center;
-    border-bottom: 1px solid var(--border); margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
     position: relative;
   }
   .lang-switcher {
-    position: absolute; top: 1.5rem; right: 1rem;
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12px; color: var(--muted); font-weight: 500;
+    position: absolute; top: 1.2rem; right: 1rem;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--muted); font-weight: 500;
     letter-spacing: 0.05em; text-transform: uppercase;
   }
   .lang-btn {
@@ -34,59 +35,115 @@
   }
   .lang-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
   .lang-btn:not(.active):hover { border-color: #555; color: var(--text); }
-
-  .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 52px; font-weight: 800; letter-spacing: -1px; color: var(--text); line-height: 1; margin-bottom: 4px; }
+  .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 48px; font-weight: 800; letter-spacing: -1px; color: var(--text); line-height: 1; margin-bottom: 4px; }
   .logo span { color: var(--red); }
-  .tagline { font-size: 13px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+  .tagline { font-size: 12px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; }
+
+  /* ── MAIN ── */
   main { width: 100%; max-width: 900px; padding: 0 1rem 3rem; }
 
-  .legend { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
-  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  /* ── LEGEND ── */
+  .legend { display: flex; gap: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .legend-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
 
-  .search-area { position: relative; margin-bottom: 1rem; }
+  /* ── SEARCH ── */
+  .search-area { position: relative; margin-bottom: 0.75rem; }
   .search-row { display: flex; gap: 8px; }
-  .search-row input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 15px; padding: 0 14px; height: 44px; outline: none; transition: border-color 0.15s; }
+  .search-row input { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 16px; padding: 0 14px; height: 48px; outline: none; transition: border-color 0.15s; -webkit-appearance: none; }
   .search-row input:focus { border-color: #555; }
   .search-row input::placeholder { color: var(--muted); }
   .search-row input:disabled { opacity: 0.35; cursor: not-allowed; }
-  .search-row button { background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 0 20px; height: 44px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
-  .search-row button:hover { opacity: 0.85; }
-  .search-row button:active { opacity: 0.7; transform: scale(0.98); }
+  .search-row button { background: var(--text); color: var(--bg); border: none; border-radius: 10px; font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 0 18px; height: 48px; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
+  .search-row button:active { opacity: 0.7; transform: scale(0.97); }
   .search-row button:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  .suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; z-index: 100; overflow: hidden; max-height: 240px; overflow-y: auto; }
-  .suggestion-item { padding: 10px 14px; font-size: 14px; cursor: pointer; color: var(--text); transition: background 0.1s; display: flex; justify-content: space-between; align-items: center; }
-  .suggestion-item:hover { background: var(--border); }
-  .suggestion-item .s-year { font-size: 12px; color: var(--muted); }
+  /* ── SUGGESTIONS ── */
+  .suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; z-index: 100; overflow: hidden; max-height: 220px; overflow-y: auto; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .suggestion-item { padding: 11px 14px; font-size: 14px; cursor: pointer; color: var(--text); transition: background 0.1s; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .suggestion-item:hover, .suggestion-item.selected { background: var(--border); }
+  .suggestion-item mark { background: none; color: var(--text); font-weight: 700; }
+  .suggestion-item .s-year { font-size: 11px; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
 
-  .attempts-bar { font-size: 12px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; margin-bottom: 1.5rem; }
+  /* ── ATTEMPTS ── */
+  .attempts-bar { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 500; margin-bottom: 1rem; }
 
+  /* ── TABLE (desktop) ── */
   .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; min-width: 680px; }
-  thead th { background: var(--surface); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--border); }
-  thead th:first-child { text-align: left; padding-left: 14px; min-width: 160px; }
+  table { width: 100%; border-collapse: collapse; min-width: 660px; }
+  thead th { background: var(--surface); font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 9px 6px; text-align: center; border-bottom: 1px solid var(--border); }
+  thead th:first-child { text-align: left; padding-left: 12px; min-width: 150px; }
   tbody tr { animation: slideIn 0.3s ease; border-bottom: 1px solid var(--border); }
   tbody tr:last-child { border-bottom: none; }
-  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-  tbody td { padding: 8px; text-align: center; vertical-align: middle; }
-  tbody td:first-child { text-align: left; padding-left: 14px; font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  tbody td { padding: 7px 6px; text-align: center; vertical-align: middle; }
+  tbody td:first-child { text-align: left; padding-left: 12px; font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; }
 
-  .chip { display: inline-flex; align-items: center; justify-content: center; gap: 3px; padding: 5px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; min-width: 60px; line-height: 1; white-space: nowrap; }
+  /* ── CHIPS ── */
+  .chip { display: inline-flex; align-items: center; justify-content: center; gap: 2px; padding: 4px 7px; border-radius: 6px; font-size: 11px; font-weight: 600; min-width: 52px; line-height: 1; white-space: nowrap; }
   .chip.correct { background: var(--green-bg); color: var(--green); }
-  .chip.close { background: var(--orange-bg); color: var(--orange); }
-  .chip.wrong { background: var(--surface2); color: var(--muted); }
-  .arrow-up { color: var(--green); font-size: 10px; }
-  .arrow-down { color: var(--red); font-size: 10px; }
+  .chip.close   { background: var(--orange-bg); color: var(--orange); }
+  .chip.wrong   { background: #2a0f0f; color: #a05050; }
+  .arrow-up   { color: var(--green); font-size: 9px; }
+  .arrow-down { color: var(--red);   font-size: 9px; }
 
-  .banner { border-radius: 10px; padding: 1.5rem; margin-top: 1.5rem; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 0.03em; }
+  /* ── MOBILE CARDS (≤ 600px) ── */
+  @media (max-width: 600px) {
+    header { padding: 1rem 1rem 0.9rem; margin-bottom: 1.1rem; }
+    .logo { font-size: 38px; }
+    .tagline { font-size: 10px; }
+    .lang-switcher { top: 1rem; }
+    main { padding: 0 0.75rem 2.5rem; }
+    .legend { gap: 0.75rem; margin-bottom: 1rem; }
+    .legend-item { font-size: 10px; }
+
+    /* Hide table entirely on mobile */
+    .table-wrapper { display: none !important; }
+
+    /* Show card list instead */
+    .cards-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .guess-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      animation: slideIn 0.3s ease;
+    }
+    .guess-card-name {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      margin-bottom: 10px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .guess-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+    }
+    .guess-card-cell {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    .guess-card-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .guess-card-cell .chip {
+      width: 100%; min-width: unset; font-size: 11px; padding: 5px 4px;
+    }
+  }
+
+  /* Show cards list only on mobile */
+  .cards-list { display: none; }
+
+  /* ── BANNER ── */
+  .banner { border-radius: 12px; padding: 1.25rem; margin-top: 1.25rem; text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 0.03em; }
   .banner.win { background: var(--green-bg); color: var(--green); border: 1px solid #16a34a; }
   .banner .sub { display: block; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 400; color: inherit; opacity: 0.75; margin-top: 6px; }
-  .countdown-block { margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(34,197,94,0.2); }
-  .countdown-label { font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.6; margin-bottom: 8px; }
-  .countdown-time { font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; letter-spacing: 4px; color: var(--text); }
+  .countdown-block { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(34,197,94,0.2); }
+  .countdown-label { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.6; margin-bottom: 6px; }
+  .countdown-time { font-family: 'Barlow Condensed', sans-serif; font-size: 38px; font-weight: 800; letter-spacing: 4px; color: var(--text); }
 
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
@@ -105,7 +162,7 @@
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div> <span id="lgCorrect">Correct</span></div>
     <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div> <span id="lgClose"></span></div>
-    <div class="legend-item"><div class="legend-dot" style="background:#2e2e2e;border:1px solid #444"></div> <span id="lgWrong"></span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2a0f0f;border:1px solid #a05050"></div> <span id="lgWrong"></span></div>
   </div>
   <div class="search-area">
     <div class="search-row">
@@ -126,6 +183,7 @@
       <tbody id="guessesBody"></tbody>
     </table>
   </div>
+  <div class="cards-list" id="cardsList"></div>
   <div id="banner"></div>
 </main>
 
@@ -520,13 +578,13 @@ function getBrand(car) {
 function buildRow(car) {
   const brand = getBrand(car);
   const fields = [
-    { val: brand,    tgt: getBrand(target), display: brand,          field: 'brand' },
-    { val: car.pays, tgt: target.pays,      display: dPays(car.pays), field: 'pays' },
-    { val: car.cat,  tgt: target.cat,       display: dCat(car.cat),   field: 'cat'  },
-    { val: car.annee, tgt: target.annee, display: car.annee + ' ' + arrow(car.annee, target.annee), field: 'annee' },
-    { val: car.cv,   tgt: target.cv,   display: dPower(car.cv) + ' ' + arrow(car.cv, target.cv),   field: 'cv'   },
-    { val: car.cyl,  tgt: target.cyl,  display: dCyl(car.cyl) + (car.cyl > 0 ? ' ' + arrow(car.cyl, target.cyl) : ''), field: 'cyl' },
-    { val: car.prix, tgt: target.prix, display: car.prix + 'k€ ' + arrow(car.prix, target.prix),   field: 'prix' },
+    { val: brand,     tgt: getBrand(target), display: brand,           field: 'brand' },
+    { val: car.pays,  tgt: target.pays,      display: dPays(car.pays), field: 'pays'  },
+    { val: car.cat,   tgt: target.cat,       display: dCat(car.cat),   field: 'cat'   },
+    { val: car.annee, tgt: target.annee,     display: car.annee + ' ' + arrow(car.annee, target.annee), field: 'annee' },
+    { val: car.cv,    tgt: target.cv,        display: dPower(car.cv)  + ' ' + arrow(car.cv, target.cv), field: 'cv'    },
+    { val: car.cyl,   tgt: target.cyl,       display: dCyl(car.cyl)   + (car.cyl > 0 ? ' ' + arrow(car.cyl, target.cyl) : ''), field: 'cyl' },
+    { val: car.prix,  tgt: target.prix,      display: car.prix + 'k€ ' + arrow(car.prix, target.prix), field: 'prix'  },
   ];
   const cells = fields.map(f => `<td><span class="chip ${chipClass(f.val, f.tgt, f.field)}">${f.display}</span></td>`);
   const tr = document.createElement('tr');
@@ -534,13 +592,43 @@ function buildRow(car) {
   return tr;
 }
 
+function buildCard(car) {
+  const brand = getBrand(car);
+  const fields = [
+    { key: 'thBrand',   val: brand,     tgt: getBrand(target), display: brand,           field: 'brand' },
+    { key: 'thCountry', val: car.pays,  tgt: target.pays,      display: dPays(car.pays), field: 'pays'  },
+    { key: 'thCat',     val: car.cat,   tgt: target.cat,       display: dCat(car.cat),   field: 'cat'   },
+    { key: 'thYear',    val: car.annee, tgt: target.annee,     display: car.annee + ' ' + arrow(car.annee, target.annee), field: 'annee' },
+    { key: 'thPower',   val: car.cv,    tgt: target.cv,        display: dPower(car.cv)  + ' ' + arrow(car.cv, target.cv), field: 'cv'    },
+    { key: 'thCyl',     val: car.cyl,   tgt: target.cyl,       display: dCyl(car.cyl)   + (car.cyl > 0 ? ' ' + arrow(car.cyl, target.cyl) : ''), field: 'cyl' },
+    { key: 'thPrice',   val: car.prix,  tgt: target.prix,      display: car.prix + 'k€ ' + arrow(car.prix, target.prix), field: 'prix'  },
+  ];
+  const card = document.createElement('div');
+  card.className = 'guess-card';
+  card.innerHTML = `
+    <div class="guess-card-name">${car.name}</div>
+    <div class="guess-card-grid">
+      ${fields.map(f => `
+        <div class="guess-card-cell">
+          <span class="guess-card-label">${t(f.key)}</span>
+          <span class="chip ${chipClass(f.val, f.tgt, f.field)}">${f.display}</span>
+        </div>`).join('')}
+    </div>`;
+  return card;
+}
+
 function renderAllGuesses() {
   const tbody = document.getElementById('guessesBody');
-  tbody.innerHTML = '';
+  const cardsList = document.getElementById('cardsList');
   const tw = document.getElementById('tableWrapper');
+  tbody.innerHTML = '';
+  cardsList.innerHTML = '';
   if (guesses.length === 0) { tw.style.display = 'none'; return; }
   tw.style.display = '';
-  [...guesses].reverse().forEach(car => tbody.appendChild(buildRow(car)));
+  [...guesses].reverse().forEach(car => {
+    tbody.appendChild(buildRow(car));
+    cardsList.appendChild(buildCard(car));
+  });
 }
 
 function renderBanner() {
@@ -563,7 +651,9 @@ function startCountdown() {
   function tick() {
     const el = document.getElementById('countdown');
     if (!el) { clearInterval(countdownInterval); return; }
-    const diff = (TODAY + 1) * 86400000 - Date.now();
+    const now = new Date();
+    const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+    const diff = midnight - now;
     if (diff <= 0) { el.textContent = '00:00:00'; return; }
     const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
     const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
@@ -591,6 +681,7 @@ function submitGuess(car) {
   document.getElementById('attemptsText').textContent = t('attempts', guesses.length);
   document.getElementById('tableWrapper').style.display = '';
   document.getElementById('guessesBody').prepend(buildRow(car));
+  document.getElementById('cardsList').prepend(buildCard(car));
 
   if (car.name === target.name) {
     gameOver = true;
@@ -605,16 +696,81 @@ function submitGuess(car) {
 // ── AUTOCOMPLETE ──────────────────────────────────────────────
 const input = document.getElementById('carInput');
 const suggestionsDiv = document.getElementById('suggestions');
+let selectedIndex = -1;
+let currentMatches = [];
 
-input.addEventListener('input', () => {
-  const q = input.value.trim().toLowerCase();
-  if (!q || q.length < 2) { suggestionsDiv.style.display = 'none'; return; }
-  const matches = CARS.filter(c => c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name));
-  if (!matches.length) { suggestionsDiv.style.display = 'none'; return; }
-  suggestionsDiv.innerHTML = matches.slice(0, 10).map(c =>
-    `<div class="suggestion-item" data-name="${c.name}"><span>${c.name}</span><span class="s-year">${dPays(c.pays)} · ${c.annee}</span></div>`
+function highlight(text, query) {
+  if (!query) return text;
+  const idx = normalize(text).indexOf(normalize(query));
+  if (idx === -1) return text;
+  return text.slice(0, idx) + '<mark>' + text.slice(idx, idx + query.length) + '</mark>' + text.slice(idx + query.length);
+}
+
+function normalize(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+function showSuggestions(q) {
+  selectedIndex = -1;
+  if (!q) { suggestionsDiv.style.display = 'none'; currentMatches = []; return; }
+  const nq = normalize(q);
+  currentMatches = CARS.filter(c =>
+    normalize(c.name).includes(nq) && !guesses.find(g => g.name === c.name)
+  );
+  if (!currentMatches.length) { suggestionsDiv.style.display = 'none'; return; }
+  suggestionsDiv.innerHTML = currentMatches.slice(0, 12).map((c, i) =>
+    `<div class="suggestion-item" data-index="${i}" data-name="${c.name}">
+      <span>${highlight(c.name, q)}</span>
+      <span class="s-year">${dPays(c.pays)} · ${c.annee}</span>
+    </div>`
   ).join('');
   suggestionsDiv.style.display = '';
+}
+
+function setSelected(i) {
+  const items = suggestionsDiv.querySelectorAll('.suggestion-item');
+  items.forEach(el => el.classList.remove('selected'));
+  if (i >= 0 && i < items.length) {
+    selectedIndex = i;
+    items[i].classList.add('selected');
+    items[i].scrollIntoView({ block: 'nearest' });
+    input.value = currentMatches[i].name;
+  } else {
+    selectedIndex = -1;
+  }
+}
+
+input.addEventListener('input', () => {
+  showSuggestions(input.value.trim());
+});
+
+input.addEventListener('keydown', e => {
+  const items = suggestionsDiv.querySelectorAll('.suggestion-item');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    setSelected(Math.min(selectedIndex + 1, items.length - 1));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    setSelected(Math.max(selectedIndex - 1, 0));
+  } else if (e.key === 'Escape') {
+    suggestionsDiv.style.display = 'none';
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (selectedIndex >= 0 && currentMatches[selectedIndex]) {
+      submitGuess(currentMatches[selectedIndex]);
+    } else {
+      const q = input.value.trim().toLowerCase();
+      const exact = CARS.find(c => normalize(c.name) === normalize(q) && !guesses.find(g => g.name === c.name));
+      if (exact) { submitGuess(exact); return; }
+      if (currentMatches.length === 1) submitGuess(currentMatches[0]);
+      else if (currentMatches.length > 1) showSuggestions(input.value.trim());
+    }
+  }
+});
+
+suggestionsDiv.addEventListener('mousedown', e => {
+  // mousedown fires before blur — prevents suggestions closing before click registers
+  e.preventDefault();
 });
 
 suggestionsDiv.addEventListener('click', e => {
@@ -626,20 +782,22 @@ suggestionsDiv.addEventListener('click', e => {
 
 document.getElementById('guessBtn').addEventListener('click', () => {
   const q = input.value.trim().toLowerCase();
-  const matches = CARS.filter(c => c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name));
-  if (matches.length === 1) submitGuess(matches[0]);
-  else if (matches.length > 1) suggestionsDiv.style.display = '';
+  if (!q) return;
+  if (selectedIndex >= 0 && currentMatches[selectedIndex]) {
+    submitGuess(currentMatches[selectedIndex]); return;
+  }
+  const exact = CARS.find(c => normalize(c.name) === normalize(q) && !guesses.find(g => g.name === c.name));
+  if (exact) { submitGuess(exact); return; }
+  if (currentMatches.length === 1) submitGuess(currentMatches[0]);
+  else showSuggestions(input.value.trim());
 });
 
-input.addEventListener('keydown', e => {
-  if (e.key !== 'Enter') return;
-  const q = input.value.trim().toLowerCase();
-  const matches = CARS.filter(c => c.name.toLowerCase().includes(q) && !guesses.find(g => g.name === c.name));
-  if (matches.length === 1) submitGuess(matches[0]);
+input.addEventListener('blur', () => {
+  setTimeout(() => { suggestionsDiv.style.display = 'none'; selectedIndex = -1; }, 150);
 });
 
-document.addEventListener('click', e => {
-  if (!e.target.closest('.search-area')) suggestionsDiv.style.display = 'none';
+input.addEventListener('focus', () => {
+  if (input.value.trim()) showSuggestions(input.value.trim());
 });
 
 // ── INIT ──────────────────────────────────────────────────────
